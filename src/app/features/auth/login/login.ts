@@ -1,11 +1,11 @@
 import { Component, ElementRef, Injector, computed, inject, input, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Auth, toAuthFailure } from '../../../core/auth/auth';
+import { Auth, AuthFailure, toAuthFailure } from '../../../core/auth/auth';
 import { Button } from '../../../shared/ui/button/button';
 import { FormField } from '../../../shared/ui/form-field/form-field';
 import { AlertVariant, InlineAlert } from '../../../shared/ui/inline-alert/inline-alert';
-import { applyFailure, emailValidators, focusFirstInvalid } from '../auth-form';
+import { applyFailure, emailValidators, focusAfterRender } from '../auth-form';
 
 /** Messages other flows can show here with `/login?notice=<key>`. */
 const NOTICES: Partial<Record<string, { variant: AlertVariant; text: string }>> = {
@@ -48,7 +48,7 @@ export class Login {
     if (this.pending()) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      focusFirstInvalid(this.host, this.injector);
+      focusAfterRender(this.host, this.injector);
       return;
     }
 
@@ -56,13 +56,27 @@ export class Login {
     this.failure.set(null);
     try {
       await this.auth.login(this.form.getRawValue());
-      await this.router.navigateByUrl('/');
     } catch (error) {
-      const failure = toAuthFailure(error);
-      if (failure.kind === 'invalid-credentials') this.form.controls.password.reset();
-      this.failure.set(applyFailure(failure, this.form));
+      this.pending.set(false);
+      this.showFailure(toAuthFailure(error));
+      return;
+    }
+    // Stays pending until the page is left, so the form cannot be sent again meanwhile.
+    try {
+      await this.router.navigateByUrl('/');
     } finally {
       this.pending.set(false);
     }
+  }
+
+  private showFailure(failure: AuthFailure): void {
+    // On login a 422 only means a format or length rule was broken: answer it like any other
+    // bad credentials, so login never reveals the password policy.
+    if (failure.kind === 'invalid-fields') failure = { kind: 'invalid-credentials' };
+    if (failure.kind === 'invalid-credentials') {
+      this.form.controls.password.reset();
+      focusAfterRender(this.host, this.injector, 'input[autocomplete="current-password"]');
+    }
+    this.failure.set(applyFailure(failure, this.form));
   }
 }

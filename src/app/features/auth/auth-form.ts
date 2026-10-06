@@ -3,10 +3,17 @@ import { FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import type { AuthFailure } from '../../core/auth/auth';
 
 // Mirror the backend rules (RegisterRequest), so most mistakes are caught before a request.
+// The OpenAPI types do not carry them: keep these in sync with the backend schemas.
 export const PASSWORD_MIN_LENGTH = 12;
 const PASSWORD_MAX_LENGTH = 128;
+const EMAIL_MAX_LENGTH = 254;
+export const NAME_MAX_LENGTH = 100;
 
-export const emailValidators = [Validators.required, Validators.email, Validators.maxLength(254)];
+export const emailValidators = [
+  Validators.required,
+  Validators.email,
+  Validators.maxLength(EMAIL_MAX_LENGTH),
+];
 export const newPasswordValidators = [
   Validators.required,
   Validators.minLength(PASSWORD_MIN_LENGTH),
@@ -52,10 +59,16 @@ export function applyFailure(failure: AuthFailure, form: FormGroup): string {
   }
 }
 
-/** Moves focus to the first invalid field once the form has re-rendered its errors. */
-export function focusFirstInvalid(host: ElementRef<HTMLElement>, injector: Injector): void {
-  afterNextRender(
-    () => host.nativeElement.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus(),
-    { injector },
-  );
+/**
+ * Moves focus once the view has re-rendered, by default to the first invalid field, so keyboard
+ * and screen reader users land on what needs fixing.
+ */
+export function focusAfterRender(
+  host: ElementRef<HTMLElement>,
+  injector: Injector,
+  selector = '[aria-invalid="true"]',
+): void {
+  afterNextRender(() => host.nativeElement.querySelector<HTMLElement>(selector)?.focus(), {
+    injector,
+  });
 }

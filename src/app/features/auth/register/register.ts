@@ -7,10 +7,11 @@ import { Button } from '../../../shared/ui/button/button';
 import { FormField } from '../../../shared/ui/form-field/form-field';
 import { InlineAlert } from '../../../shared/ui/inline-alert/inline-alert';
 import {
+  NAME_MAX_LENGTH,
   PASSWORD_MIN_LENGTH,
   applyFailure,
   emailValidators,
-  focusFirstInvalid,
+  focusAfterRender,
   matchesField,
   newPasswordValidators,
 } from '../auth-form';
@@ -29,7 +30,7 @@ export class Register {
 
   protected readonly passwordHint = `At least ${PASSWORD_MIN_LENGTH} characters.`;
   protected readonly form = inject(NonNullableFormBuilder).group({
-    name: ['', [Validators.required, Validators.maxLength(100)]],
+    name: ['', [Validators.required, Validators.maxLength(NAME_MAX_LENGTH)]],
     email: ['', emailValidators],
     password: ['', newPasswordValidators],
     confirmPassword: [
@@ -51,7 +52,7 @@ export class Register {
     if (this.pending()) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      focusFirstInvalid(this.host, this.injector);
+      focusAfterRender(this.host, this.injector);
       return;
     }
 
@@ -60,10 +61,15 @@ export class Register {
     const { name, email, password } = this.form.getRawValue();
     try {
       await this.auth.register({ name, email, password });
-      await this.router.navigate(['/login'], { queryParams: { notice: 'registered' } });
     } catch (error) {
+      this.pending.set(false);
       this.failure.set(applyFailure(toAuthFailure(error), this.form));
-      focusFirstInvalid(this.host, this.injector);
+      focusAfterRender(this.host, this.injector);
+      return;
+    }
+    // Stays pending until the page is left, so the form cannot be sent again meanwhile.
+    try {
+      await this.router.navigate(['/login'], { queryParams: { notice: 'registered' } });
     } finally {
       this.pending.set(false);
     }
