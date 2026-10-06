@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import type { components } from '../../../core/api/schema';
+import { authPage } from '../testing';
 import { Register } from './register';
 
 const REGISTER_URL = '/api/v1/auth/register';
@@ -23,21 +24,9 @@ describe('Register', () => {
   async function render() {
     const fixture = TestBed.createComponent(Register);
     await fixture.whenStable();
-    const el = fixture.nativeElement as HTMLElement;
-    // Finds inputs by their visible label, the way a user does.
-    const input = (label: string) => {
-      const match = [...el.querySelectorAll('label')].find((l) =>
-        l.textContent?.trim().startsWith(label),
-      )!;
-      return el.querySelector<HTMLInputElement>(`#${match.htmlFor}`)!;
-    };
     const page = {
       fixture,
-      input,
-      type(label: string, value: string) {
-        input(label).value = value;
-        input(label).dispatchEvent(new Event('input'));
-      },
+      ...authPage(fixture),
       fill(values: Partial<Record<string, string>> = {}) {
         const all = {
           Name: 'Ana Souza',
@@ -48,23 +37,8 @@ describe('Register', () => {
         };
         for (const [label, value] of Object.entries(all)) page.type(label, value ?? '');
       },
-      async submit() {
-        el.querySelector('form')!.dispatchEvent(new Event('submit'));
-        await fixture.whenStable();
-      },
-      errorOf: (label: string) =>
-        el
-          .querySelector(`#${input(label).id}-error`)
-          ?.textContent?.replace('!', '')
-          .trim(),
-      alert: () => el.querySelector('app-inline-alert'),
     };
     return page;
-  }
-
-  async function settle(fixture: { whenStable(): Promise<unknown> }) {
-    await new Promise((resolve) => setTimeout(resolve));
-    await fixture.whenStable();
   }
 
   it('validates every field before sending anything', async () => {
@@ -107,7 +81,7 @@ describe('Register', () => {
       password: PASSWORD,
     });
     request.flush(null, { status: 202, statusText: 'Accepted' });
-    await settle(page.fixture);
+    await page.settle();
 
     expect(navigate).toHaveBeenCalledWith(['/login'], { queryParams: { notice: 'registered' } });
   });
@@ -139,7 +113,7 @@ describe('Register', () => {
     httpTesting
       .expectOne(REGISTER_URL)
       .flush(body, { status: 422, statusText: 'Unprocessable Entity' });
-    await settle(page.fixture);
+    await page.settle();
 
     expect(page.errorOf('Email')).toBe('Enter a valid email address.');
     expect(page.alert()?.textContent).toContain('Some fields need your attention.');
