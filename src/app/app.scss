@@ -14,7 +14,7 @@
   border-bottom: 1px solid var(--prisma-border);
   background: var(--prisma-surface);
 
-  @include from($bp-md) {
+  @include breakpoint($bp-md) {
     padding: $space-4 $space-8;
   }
 }
@@ -42,7 +42,7 @@
   display: grid;
   padding: $space-6 $space-4;
 
-  @include from($bp-md) {
+  @include breakpoint($bp-md) {
     padding: $space-12 $space-8;
   }
 }

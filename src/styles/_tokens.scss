@@ -35,5 +35,8 @@ $weight-bold: 700;
 $leading-tight: 1.1;
 $leading-normal: 1.5;
 
-// Breakpoints (mobile-first, use with the `from` mixin)
+// Breakpoints (mobile-first, use with the `breakpoint` mixin)
+$bp-sm: 640px;
 $bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;

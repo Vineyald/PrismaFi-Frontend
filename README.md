@@ -55,7 +55,7 @@ PrismaFi-Frontend/
 │   ├── styles/
 │   │   ├── _tokens.scss             # Tokens de compilação: espaçamento, raios, tipografia, breakpoints
 │   │   ├── _themes.scss             # Tema em runtime: custom properties --prisma-*, claro + escuro
-│   │   ├── _mixins.scss             # Media query mobile-first `from($bp)`
+│   │   ├── _mixins.scss             # Media query mobile-first `breakpoint($bp)`
 │   │   └── _reset.scss              # Reset moderno mínimo
 │   ├── styles.scss                  # Entrada global: reset, temas, estilos base do body
 │   ├── index.html
@@ -99,7 +99,7 @@ O PrismaFi tem identidade visual própria. Ele **não usa Tailwind, Bootstrap, D
 - **Tokens (`_tokens.scss`)** são variáveis SCSS para valores fixos em tempo de build: escala de espaçamento (`$space-*`), raios, fonte, escala tipográfica, pesos, alturas de linha e breakpoints. Os componentes os carregam com `@use 'tokens' as *;` (`src/styles` está no include path do SCSS). Um token só é criado quando um componente precisa dele, e o Sass falha em variáveis indefinidas.
 - **Temas (`_themes.scss`)** são CSS custom properties para tudo o que muda em runtime: `--prisma-bg`, `--prisma-surface`, `--prisma-border`, `--prisma-text`, `--prisma-text-muted`, `--prisma-accent`, `--prisma-accent-2`, `--prisma-positive`, `--prisma-warning`, `--prisma-danger`, `--prisma-shadow` e `--prisma-gradient-brand`. O tema claro é o padrão e o escuro segue o `prefers-color-scheme`. Um seletor manual de tema pode, no futuro, sobrescrever as mesmas propriedades via `[data-theme]`.
 - **Estilos de componente** ficam junto do componente (`*.scss`, encapsulamento emulado). Usam tokens e `var(--prisma-*)`, não cores ou espaçamentos fixos no código. Estilos globais se limitam a reset, tema e tipografia base.
-- **Responsividade**: mobile-first, com `@include from($bp-md) { ... }`.
+- **Responsividade**: mobile-first, com `@include breakpoint($bp-md) { ... }` (ou pelo nome: `breakpoint(md)`).
 - **Acessibilidade**: anel global de `:focus-visible`, `prefers-reduced-motion` respeitado no reset, contraste de texto de pelo menos 3:1 para texto grande e 4,5:1 para texto comum, e as regras de acessibilidade do ESLint nos templates.
 
 ## Configuração do ambiente
