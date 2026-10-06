@@ -27,7 +27,8 @@ module.exports = defineConfig([
       '@angular-eslint/component-selector': [
         'error',
         {
-          type: 'element',
+          // Attribute selectors let a component enhance a native element (button[app-button]).
+          type: ['element', 'attribute'],
           prefix: 'app',
           style: 'kebab-case',
         },

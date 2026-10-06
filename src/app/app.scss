@@ -10,11 +10,12 @@
 .shell-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: $space-4;
   border-bottom: 1px solid var(--prisma-border);
   background: var(--prisma-surface);
 
-  @include from($bp-md) {
+  @include breakpoint($bp-md) {
     padding: $space-4 $space-8;
   }
 }
@@ -27,6 +28,11 @@
   font-weight: $weight-bold;
   color: var(--prisma-text);
   text-decoration: none;
+}
+
+.shell-link {
+  color: var(--prisma-accent);
+  font-weight: $weight-medium;
 }
 
 .brand-mark {
@@ -42,7 +48,7 @@
   display: grid;
   padding: $space-6 $space-4;
 
-  @include from($bp-md) {
+  @include breakpoint($bp-md) {
     padding: $space-12 $space-8;
   }
 }

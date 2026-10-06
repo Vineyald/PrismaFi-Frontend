@@ -1,0 +1,70 @@
+@use 'tokens' as *;
+
+:host {
+  display: grid;
+  gap: $space-2;
+  text-align: left;
+}
+
+label {
+  font-size: $text-sm;
+  font-weight: $weight-medium;
+}
+
+.required {
+  color: var(--prisma-danger);
+}
+
+input {
+  min-height: $control-height;
+  padding: $space-2 $space-3;
+  border: 1px solid var(--prisma-border);
+  border-radius: $radius-sm;
+  background: var(--prisma-surface);
+  color: var(--prisma-text);
+
+  &::placeholder {
+    color: var(--prisma-text-muted);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: var(--prisma-danger);
+    box-shadow: inset 0 0 0 1px var(--prisma-danger);
+  }
+
+  &:disabled {
+    background: var(--prisma-bg);
+    color: var(--prisma-text-muted);
+    cursor: not-allowed;
+  }
+}
+
+.hint,
+.error {
+  font-size: $text-sm;
+}
+
+.hint {
+  color: var(--prisma-text-muted);
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  color: var(--prisma-danger);
+  font-weight: $weight-medium;
+}
+
+.icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+  border-radius: $radius-full;
+  background: var(--prisma-danger);
+  color: var(--prisma-surface);
+  font-size: $text-xs;
+  font-weight: $weight-bold;
+}

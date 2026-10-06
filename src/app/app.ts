@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { Auth } from './core/auth/auth';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +11,9 @@ import { RouterLink, RouterOutlet } from '@angular/router';
         <span class="brand-mark" aria-hidden="true"></span>
         PrismaFi
       </a>
+      @if (!auth.isAuthenticated()) {
+        <a class="shell-link" routerLink="/login">Sign in</a>
+      }
     </header>
     <main class="shell-main">
       <router-outlet />
@@ -17,4 +21,6 @@ import { RouterLink, RouterOutlet } from '@angular/router';
   `,
   styleUrl: './app.scss',
 })
-export class App {}
+export class App {
+  protected readonly auth = inject(Auth);
+}

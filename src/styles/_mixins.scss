@@ -1,5 +1,23 @@
+@use 'sass:map';
+@use 'sass:meta';
+@use 'tokens' as *;
+
+$breakpoints: (
+  sm: $bp-sm,
+  md: $bp-md,
+  lg: $bp-lg,
+  xl: $bp-xl,
+);
+
 // Mobile-first media query: styles apply from $min width upwards.
-@mixin from($min) {
+// $min is a breakpoint name (sm, md, lg, xl) or a length.
+@mixin breakpoint($min) {
+  @if map.has-key($breakpoints, $min) {
+    $min: map.get($breakpoints, $min);
+  } @else if meta.type-of($min) != number {
+    @error 'Unknown breakpoint `#{$min}`. Use #{map.keys($breakpoints)} or a length.';
+  }
+
   @media (min-width: $min) {
     @content;
   }
