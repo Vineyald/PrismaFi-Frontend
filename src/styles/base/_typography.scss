@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../abstracts' as *;
 
 body {
@@ -32,6 +33,6 @@ a {
 }
 
 ::selection {
-  background: rgb(124 92 255 / 40%);
+  background: color.change($violet-400, $alpha: 0.4);
   color: $color-text-primary;
 }

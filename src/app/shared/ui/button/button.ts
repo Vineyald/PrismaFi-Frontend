@@ -7,11 +7,11 @@ export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
  * `<button app-button type="submit" [loading]="pending()">` or
  * `<a app-button variant="secondary" routerLink="/login">`.
  *
- * Native semantics stay with the consumer (type, disabled, href, form). While `loading`, the
- * button keeps keyboard focus (aria-disabled instead of disabled) and cancels clicks, including
- * the click a browser fires when Enter is pressed in a form field, so the form cannot be
- * submitted again. Change the label too (e.g. "Signing in…"): that is what assistive technology
- * reads.
+ * Native semantics stay with the consumer (type, disabled, href, form). `loading` is for
+ * `<button>`: it keeps keyboard focus (aria-disabled instead of disabled) and blocks form
+ * submission, including the implicit submit when Enter is pressed in a field. Your own
+ * `(click)` handlers still run, so guard them too, and do not rely on it for routerLink anchors.
+ * Change the label too (e.g. "Signing in…"): that is what assistive technology reads.
  *
  * BEM block `.button`; unencapsulated because the block name already scopes it.
  */

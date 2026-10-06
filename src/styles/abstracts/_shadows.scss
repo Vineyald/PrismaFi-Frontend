@@ -1,3 +1,6 @@
+@use 'sass:color';
+@use 'colors' as *;
+
 // On a dark UI, separation comes from surface contrast and borders first; shadows only add
 // depth. The top highlight mimics light catching a machined edge.
 $shadow-highlight: inset 0 1px 0 rgb(255 255 255 / 4%);
@@ -10,4 +13,4 @@ $shadow-lg:
   0 32px 80px -24px rgb(0 0 0 / 70%);
 
 // Accent glow: decorative only (hero visuals), never on routine UI.
-$glow-accent: 0 0 48px -8px rgb(124 92 255 / 35%);
+$glow-accent: 0 0 48px -8px color.change($violet-400, $alpha: 0.35);

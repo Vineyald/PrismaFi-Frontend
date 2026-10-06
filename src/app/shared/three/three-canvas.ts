@@ -27,7 +27,7 @@ export interface ThreeScene {
  */
 export type ThreeSceneFactory = (three: typeof Three) => ThreeScene;
 
-export type ThreeCanvasState = 'idle' | 'running' | 'static' | 'unsupported';
+type ThreeCanvasState = 'idle' | 'running' | 'static' | 'unsupported';
 
 const MAX_PIXEL_RATIO = 2; // sharper than 2x costs fill rate with no visible gain
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
@@ -87,15 +87,16 @@ export class ThreeCanvas {
 
       const start = async () => {
         started = true;
-        const three = await import('three');
+        let three: typeof Three;
+        try {
+          three = await import('three');
+        } catch {
+          this.state.set('unsupported'); // chunk failed to load (offline, stale deploy)
+          return;
+        }
         if (!destroyed) sync = this.mount(three, () => visible, teardown);
       };
 
-      if (typeof IntersectionObserver === 'undefined') {
-        visible = true;
-        void start();
-        return;
-      }
       const observer = new IntersectionObserver(
         ([entry]) => {
           visible = entry.isIntersecting;
@@ -129,15 +130,24 @@ export class ThreeCanvas {
     }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO));
 
-    const handle = this.scene()(three);
+    teardown.push(() => {
+      renderer.setAnimationLoop(null);
+      renderer.dispose();
+      renderer.forceContextLoss();
+    });
+
+    let handle: ThreeScene;
+    try {
+      handle = this.scene()(three);
+    } catch (error) {
+      this.state.set('unsupported');
+      throw error; // a broken scene is a bug: surface it, but the context is already released
+    }
     const { scene, camera } = handle;
     const render = () => renderer.render(scene, camera);
     teardown.push(() => {
-      renderer.setAnimationLoop(null);
       handle.dispose?.();
       disposeScene(scene);
-      renderer.dispose();
-      renderer.forceContextLoss();
     });
 
     const resize = () => {
@@ -149,11 +159,9 @@ export class ThreeCanvas {
       render();
     };
     resize();
-    if (typeof ResizeObserver !== 'undefined') {
-      const observer = new ResizeObserver(resize);
-      observer.observe(this.host);
-      teardown.push(() => observer.disconnect());
-    }
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(this.host);
+    teardown.push(() => resizeObserver.disconnect());
 
     // Animate only while visible and motion is allowed; otherwise keep the last frame.
     const reducedMotion = window.matchMedia(REDUCED_MOTION);

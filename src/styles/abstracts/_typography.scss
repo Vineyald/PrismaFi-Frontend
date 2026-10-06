@@ -95,7 +95,4 @@ $text-styles: (
 /// Financial figures: equal-width digits so columns and changing values do not shift.
 @mixin numeric {
   font-variant-numeric: tabular-nums lining-nums;
-  font-feature-settings:
-    'tnum' 1,
-    'lnum' 1;
 }

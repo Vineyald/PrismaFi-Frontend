@@ -21,22 +21,23 @@ Distribuição alvo: **70–80%** escuros neutros, **15–20%** tipografia clara
 
 ### Paleta (`abstracts/_colors.scss`)
 
-| Token                                    | Hex                               | Uso                                                   |
-| ---------------------------------------- | --------------------------------- | ----------------------------------------------------- |
-| `$neutral-950`                           | `#08090d`                         | Fundo da página                                       |
-| `$neutral-900`                           | `#0d0f14`                         | Fundo secundário, campos                              |
-| `$neutral-850`                           | `#12151c`                         | Superfícies (cards)                                   |
-| `$neutral-800`                           | `#181c25`                         | Superfícies aninhadas                                 |
-| `$neutral-750` / `700` / `600`           | `#1f2430` / `#2a303d` / `#3d4554` | Bordas sutil / padrão / forte                         |
-| `$neutral-400`                           | `#8790a2`                         | Texto apagado (6,2:1)                                 |
-| `$neutral-300`                           | `#b3bac8`                         | Texto secundário (10,2:1)                             |
-| `$neutral-50`                            | `#f5f6f9`                         | Texto principal (18,4:1)                              |
-| `$violet-500`                            | `#7655ff`                         | Preenchimento da ação primária (rótulo branco 4,65:1) |
-| `$violet-600` / `700`                    | `#6a48f5` / `#5f3fe6`             | Hover / active da ação primária                       |
-| `$violet-400`                            | `#7c5cff`                         | Violeta da marca: luz, decoração, cenas 3D            |
-| `$violet-300`                            | `#ae9bff`                         | Texto violeta e foco sobre escuro (8,5:1)             |
-| `$cyan-400`                              | `#38bdf8`                         | Acento secundário (9,3:1)                             |
-| `$green-400` / `$amber-400` / `$red-400` | `#3dd68c` / `#f5b544` / `#ff6b70` | Sucesso / atenção / erro                              |
+| Token                                    | Hex                               | Uso                                                                  |
+| ---------------------------------------- | --------------------------------- | -------------------------------------------------------------------- |
+| `$neutral-950`                           | `#08090d`                         | Fundo da página                                                      |
+| `$neutral-900`                           | `#0d0f14`                         | Fundo secundário, campos                                             |
+| `$neutral-850`                           | `#12151c`                         | Superfícies (cards)                                                  |
+| `$neutral-800`                           | `#181c25`                         | Superfícies aninhadas                                                |
+| `$neutral-750` / `700`                   | `#1f2430` / `#2a303d`             | Bordas sutil / padrão (divisões, superfícies)                        |
+| `$neutral-500`                           | `#5c6577`                         | Borda forte: contorno de controles (3,3:1 sobre campos, WCAG 1.4.11) |
+| `$neutral-400`                           | `#8790a2`                         | Texto apagado (6,2:1)                                                |
+| `$neutral-300`                           | `#b3bac8`                         | Texto secundário (10,2:1)                                            |
+| `$neutral-50`                            | `#f5f6f9`                         | Texto principal (18,4:1)                                             |
+| `$violet-500`                            | `#7655ff`                         | Preenchimento da ação primária (rótulo branco 4,65:1)                |
+| `$violet-600` / `700`                    | `#6a48f5` / `#5f3fe6`             | Hover / active da ação primária                                      |
+| `$violet-400`                            | `#7c5cff`                         | Violeta da marca: luz, decoração, cenas 3D                           |
+| `$violet-300`                            | `#ae9bff`                         | Texto violeta e foco sobre escuro (8,5:1)                            |
+| `$cyan-400`                              | `#38bdf8`                         | Acento secundário (9,3:1)                                            |
+| `$green-400` / `$amber-400` / `$red-400` | `#3dd68c` / `#f5b544` / `#ff6b70` | Sucesso / atenção / erro                                             |
 
 Contrastes medidos (WCAG) contra `#08090d`. O violeta de referência `#7c5cff` com texto branco dá 4,35:1, abaixo de 4,5:1: por isso botões usam `#7655ff`, e `#7c5cff` fica para luz e decoração.
 
@@ -158,11 +159,11 @@ Regras:
 
 ## Componentes base (`shared/ui/`)
 
-| Bloco                                            | Variantes / estados                                                                                                             |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| `button` (`button[app-button]`, `a[app-button]`) | `--primary` (padrão), `--secondary`, `--ghost`; `--small`; `--loading` (spinner, `aria-disabled`, cancela cliques); `:disabled` |
-| `form-field`                                     | `--invalid`, `--disabled`; elementos `__label`, `__required`, `__input`, `__hint`, `__error`                                    |
-| `inline-alert`                                   | `--error` (`role="alert"`), `--warning`, `--info` (`role="status"`); ícone de formato distinto por variante                     |
+| Bloco                                            | Variantes / estados                                                                                                                                                                                                |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `button` (`button[app-button]`, `a[app-button]`) | `--primary` (padrão), `--secondary`, `--ghost`; `--small`; `--loading` (só em `<button>`: spinner, `aria-disabled`, bloqueia o envio do formulário; handlers `(click)` próprios precisam se proteger); `:disabled` |
+| `form-field`                                     | `--invalid`, `--disabled`; elementos `__label`, `__required`, `__input`, `__hint`, `__error`                                                                                                                       |
+| `inline-alert`                                   | `--error` (`role="alert"`), `--warning`, `--info` (`role="status"`); ícone de formato distinto por variante                                                                                                        |
 
 Estados interativos: default, hover, active, foco visível, disabled, loading e erro. Variante `danger` só entra quando existir uma ação destrutiva real.
 
@@ -244,7 +245,7 @@ A ideia guia: **infraestrutura financeira visualizada como geometria de precisã
 - Com `prefers-reduced-motion: reduce`, renderiza um quadro estático (e reage se a preferência mudar).
 - Acompanha o tamanho do elemento (`ResizeObserver`) e limita o device pixel ratio a 2.
 - Ao destruir: para o loop, chama o `dispose` da cena, libera geometrias, materiais e texturas, o renderer e o contexto WebGL.
-- Sem WebGL, fica vazio com `data-state="unsupported"`: dê ao host um fundo CSS de fallback (ex.: `backdrop-glow`).
+- Sem WebGL, se o chunk do `three` não carregar ou se a cena lançar erro, fica vazio com `data-state="unsupported"` (o contexto WebGL é liberado): dê ao host um fundo CSS de fallback (ex.: `backdrop-glow`).
 - O canvas é decorativo (`aria-hidden`); o significado fica no conteúdo ao redor.
 
 A cena é uma função que recebe o módulo `three` e devolve `{ scene, camera, update?, dispose? }`:
@@ -263,7 +264,8 @@ const heroPrism: ThreeSceneFactory = (three) => {
 ## Acessibilidade
 
 - Contraste: texto comum ≥ 4,5:1, texto grande e componentes de UI ≥ 3:1 (valores medidos na tabela de cores). Cor de acento nunca é tomada como "legível" sem medir.
-- Foco sempre visível: anel global `:focus-visible` de 2px em `$color-focus`; campos usam borda + anel próprios. Nunca remover outline sem substituto.
+- Foco sempre visível: anel global `:focus-visible` de 2px em `$color-focus`; campos usam borda + anel próprios, com outline transparente para continuar visível em modo de alto contraste (forced colors). Nunca remover outline sem substituto.
+- Contorno de controles (campos) ≥ 3:1 contra o fundo: `$color-border-strong`. Bordas sutil e padrão servem só para dividir superfícies.
 - Estado nunca só por cor: alertas têm ícone de formato distinto e rótulo oculto; erros de campo têm ícone e texto; deltas financeiros têm sinal e seta.
 - Alvos de toque ≥ 44px (`$control-height`); o tamanho pequeno (36px) só em barras de navegação.
 - HTML semântico primeiro: `<button>`, `<a>`, `<label for>`, landmarks.

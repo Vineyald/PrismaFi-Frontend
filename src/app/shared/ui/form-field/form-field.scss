@@ -18,7 +18,7 @@
     width: 100%;
     min-height: $control-height;
     padding: 0 $space-3;
-    border: 1px solid $color-border-default;
+    border: 1px solid $color-border-strong;
     border-radius: $radius-sm;
     background: $color-background-secondary;
     color: $color-text-primary;
@@ -29,13 +29,14 @@
     }
 
     &:hover {
-      border-color: $color-border-strong;
+      border-color: $color-text-muted;
     }
 
-    // Replaces the global outline: a 2px focus-colored edge on the field itself.
-    &:focus-visible,
+    // Replaces the global outline with a 2px focus-colored edge. The transparent outline still
+    // shows in forced-colors mode, where box-shadow is removed.
     &:focus {
-      outline: none;
+      outline: 2px solid transparent;
+      outline-offset: 0;
       border-color: $color-focus;
       box-shadow: 0 0 0 1px $color-focus;
     }

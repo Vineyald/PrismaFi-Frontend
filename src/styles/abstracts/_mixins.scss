@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use 'colors' as *;
 @use 'radius' as *;
 @use 'shadows' as *;
@@ -37,9 +38,9 @@
 
 /// Soft light source, like light entering a prism. Violet by default, cyan as the counterpoint.
 @mixin backdrop-glow($color: violet, $position: 50% 0%, $size: 60% 50%) {
-  $light: rgb(124 92 255 / 14%);
+  $light: color.change($violet-400, $alpha: 0.14);
   @if $color == cyan {
-    $light: rgb(56 189 248 / 14%);
+    $light: color.change($cyan-400, $alpha: 0.14);
   }
   background-image: radial-gradient(ellipse $size at $position, $light, transparent 70%);
 }

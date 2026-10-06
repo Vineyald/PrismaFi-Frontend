@@ -244,7 +244,7 @@ Com eventos de auditoria registrados para as ações financeiras críticas. O MV
 - [x] Angular 22 standalone e zoneless, com TypeScript `strict` e `strictTemplates`
 - [x] Rotas lazy (`loadComponent`) com redirecionamento de rotas desconhecidas
 - [x] Signals e `httpResource` em uso (status da API na tela inicial)
-- [x] Base do design system em SCSS: tokens, temas claro e escuro via custom properties, reset e mixin de breakpoint
+- [x] Base do design system em SCSS: tokens, tema via custom properties, reset e mixin de breakpoint (substituída pela identidade visual definitiva, escura, descrita em `docs/design-system.md`)
 - [x] Shell mínimo e tela inicial responsivos
 - [x] Proxy de desenvolvimento `/api` para o backend
 - [x] Tipos da API gerados a partir do OpenAPI (`npm run api:types`)
