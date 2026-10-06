@@ -7,5 +7,10 @@ export const routes: Routes = [
     title: 'Sign in · PrismaFi',
     loadComponent: () => import('./features/auth/login/login').then((m) => m.Login),
   },
+  {
+    path: 'register',
+    title: 'Create account · PrismaFi',
+    loadComponent: () => import('./features/auth/register/register').then((m) => m.Register),
+  },
   { path: '**', redirectTo: '' },
 ];
