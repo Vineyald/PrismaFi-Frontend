@@ -21,18 +21,20 @@ O backend fica em um repositório separado (`PrismaFi-Backend`). Os dois se inte
 
 ## Stack tecnológica
 
-| Tecnologia                                 | Por que está aqui                                                                                                                  | Status                                                         |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| **Angular 22**                             | Framework da aplicação: componentes standalone, Signals, router, HttpClient. Zoneless por padrão.                                  | instalado                                                      |
-| **TypeScript 6** (strict)                  | Tipagem de ponta a ponta, incluindo os tipos gerados a partir do schema OpenAPI do backend. `strict` e `strictTemplates` ativados. | instalado                                                      |
-| **SCSS**                                   | O design system próprio do PrismaFi: tokens de compilação e CSS custom properties para temas em runtime.                           | instalado                                                      |
-| **Signals**                                | Estado local e compartilhado com `signal`, `computed` e `httpResource`. Sem NgRx e sem stores de BehaviorSubject.                  | em uso                                                         |
-| **Vitest**                                 | Testes unitários e de componentes, pelo builder `@angular/build:unit-test` com jsdom.                                              | instalado                                                      |
-| **Playwright**                             | Testes end-to-end em navegador real (o Google Chrome instalado).                                                                   | instalado                                                      |
-| **ESLint** (angular-eslint) + **Prettier** | Lint, incluindo regras de acessibilidade nos templates, e formatação.                                                              | instalado                                                      |
-| **Angular CDK**                            | Primitivas de comportamento e acessibilidade (overlays, focus trap, a11y) sob o visual próprio do PrismaFi.                        | planejado: instalar com o primeiro overlay ou menu             |
-| **Lucide**                                 | Conjunto de ícones.                                                                                                                | planejado: instalar com o primeiro ícone                       |
-| **Apache ECharts**                         | Gráficos financeiros.                                                                                                              | planejado: instalar com o primeiro gráfico que realmente ajude |
+| Tecnologia                                 | Por que está aqui                                                                                                                         | Status                                                         |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **Angular 22**                             | Framework da aplicação: componentes standalone, Signals, router, HttpClient. Zoneless por padrão.                                         | instalado                                                      |
+| **TypeScript 6** (strict)                  | Tipagem de ponta a ponta, incluindo os tipos gerados a partir do schema OpenAPI do backend. `strict` e `strictTemplates` ativados.        | instalado                                                      |
+| **SCSS**                                   | O design system próprio do PrismaFi: tokens de compilação e CSS custom properties para temas em runtime.                                  | instalado                                                      |
+| **Signals**                                | Estado local e compartilhado com `signal`, `computed` e `httpResource`. Sem NgRx e sem stores de BehaviorSubject.                         | em uso                                                         |
+| **Vitest**                                 | Testes unitários e de componentes, pelo builder `@angular/build:unit-test` com jsdom.                                                     | instalado                                                      |
+| **Playwright**                             | Testes end-to-end em navegador real (o Google Chrome instalado).                                                                          | instalado                                                      |
+| **ESLint** (angular-eslint) + **Prettier** | Lint, incluindo regras de acessibilidade nos templates, e formatação.                                                                     | instalado                                                      |
+| **Angular CDK**                            | Primitivas de comportamento e acessibilidade (overlays, focus trap, a11y) sob o visual próprio do PrismaFi.                               | planejado: instalar com o primeiro overlay ou menu             |
+| **Lucide**                                 | Conjunto de ícones.                                                                                                                       | planejado: instalar com o primeiro ícone                       |
+| **Three.js**                               | Cenas 3D da identidade (prismas da landing page), carregadas por import dinâmico só quando o canvas aparece. Ver `docs/design-system.md`. | instalado                                                      |
+| **Inter** (`@fontsource-variable/inter`)   | Fonte da interface, auto-hospedada (sem requisição a terceiros), com algarismos tabulares.                                                | instalado                                                      |
+| **Apache ECharts**                         | Gráficos financeiros.                                                                                                                     | planejado: instalar com o primeiro gráfico que realmente ajude |
 
 Pacotes planejados só são instalados quando um componente precisa deles, seguindo a regra do projeto contra dependências sem uso.
 
@@ -55,7 +57,8 @@ PrismaFi-Frontend/
 │   │   │       ├── auth-page.scss   # Estilo compartilhado pelas duas telas
 │   │   │       └── testing.ts       # Helpers dos specs das telas
 │   │   ├── shared/
-│   │   │   └── ui/                  # button, form-field, inline-alert
+│   │   │   ├── ui/                  # button, form-field, inline-alert
+│   │   │   └── three/               # <app-three-canvas> (cenas 3D lazy) e PRISM_PALETTE
 │   │   ├── app.ts / app.scss        # Shell da aplicação: header + <router-outlet>
 │   │   ├── app.routes.ts            # Rotas lazy
 │   │   └── app.config.ts            # Providers: router (com input binding), HttpClient (fetch)

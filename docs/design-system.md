@@ -235,6 +235,31 @@ Para cenas 3D (hero da landing page e futuros visuais):
 
 A ideia guia: **infraestrutura financeira visualizada como geometria de precisão.** A identidade deve ser reconhecível mesmo sem o logotipo.
 
+### Infraestrutura (`shared/three/`)
+
+`<app-three-canvas [scene]="factory">` hospeda uma cena e cuida do ciclo de vida:
+
+- Carrega o `three` por import dinâmico, só no navegador (`afterNextRender`), quando o canvas chega perto da viewport. Nada de Three.js no bundle inicial.
+- Anima só enquanto visível (`IntersectionObserver`); fora da tela, para o loop.
+- Com `prefers-reduced-motion: reduce`, renderiza um quadro estático (e reage se a preferência mudar).
+- Acompanha o tamanho do elemento (`ResizeObserver`) e limita o device pixel ratio a 2.
+- Ao destruir: para o loop, chama o `dispose` da cena, libera geometrias, materiais e texturas, o renderer e o contexto WebGL.
+- Sem WebGL, fica vazio com `data-state="unsupported"`: dê ao host um fundo CSS de fallback (ex.: `backdrop-glow`).
+- O canvas é decorativo (`aria-hidden`); o significado fica no conteúdo ao redor.
+
+A cena é uma função que recebe o módulo `three` e devolve `{ scene, camera, update?, dispose? }`:
+
+```ts
+const heroPrism: ThreeSceneFactory = (three) => {
+  const scene = new three.Scene();
+  const camera = new three.PerspectiveCamera(35, 1, 0.1, 100);
+  // ... geometria, materiais e luzes com PRISM_PALETTE
+  return { scene, camera, update: (delta) => (prism.rotation.y += delta * 0.2) };
+};
+```
+
+`PRISM_PALETTE` (`shared/three/prism-palette.ts`) espelha os tokens de cor em números para o WebGL. O host define o tamanho (`height`, `aspect-ratio` ou posição absoluta atrás do conteúdo, com `z-index: $z-background`).
+
 ## Acessibilidade
 
 - Contraste: texto comum ≥ 4,5:1, texto grande e componentes de UI ≥ 3:1 (valores medidos na tabela de cores). Cor de acento nunca é tomada como "legível" sem medir.
