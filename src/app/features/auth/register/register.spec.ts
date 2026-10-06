@@ -14,7 +14,12 @@ describe('Register', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+      // A stub /login route: a successful registration navigates there.
+      providers: [
+        provideRouter([{ path: 'login', children: [] }]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     });
     httpTesting = TestBed.inject(HttpTestingController);
   });
