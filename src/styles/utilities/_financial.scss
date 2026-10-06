@@ -1,0 +1,54 @@
+@use '../abstracts' as *;
+
+// Financial figures. Direction is never shown by color alone: the value keeps its sign and the
+// delta modifiers add an arrow (hidden from screen readers, which read the sign).
+//
+//   <p class="metric">
+//     <span class="metric__label">Saldo total</span>
+//     <span class="metric__value">R$ 12.450,00</span>
+//     <span class="metric__delta metric__delta--positive">+8,42%</span>
+//   </p>
+.metric {
+  display: grid;
+  gap: $space-1;
+
+  &__label {
+    @include text-style(label);
+    color: $color-text-muted;
+  }
+
+  &__value {
+    @include text-style(h2);
+    @include numeric;
+  }
+
+  &__delta {
+    @include text-style(label);
+    @include numeric;
+    display: inline-flex;
+    align-items: center;
+    gap: $space-1;
+    color: $color-text-secondary;
+
+    &--positive {
+      color: $color-success;
+
+      &::before {
+        content: '\2197' / '';
+      }
+    }
+
+    &--negative {
+      color: $color-error;
+
+      &::before {
+        content: '\2198' / '';
+      }
+    }
+  }
+}
+
+// Inline figures inside text or tables.
+.numeric {
+  @include numeric;
+}

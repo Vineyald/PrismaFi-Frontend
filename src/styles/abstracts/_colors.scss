@@ -1,0 +1,62 @@
+// Colors: a raw palette (only referenced here and in base/_root.scss) and the semantic tokens
+// components use. Semantic tokens resolve to CSS custom properties so they stay overridable at
+// runtime. Contrast ratios (WCAG) are measured against $neutral-950, the page background.
+
+// --- Palette -----------------------------------------------------------------------------
+// Cool graphite neutrals, a hint of blue so violet and cyan light sits naturally on them.
+$neutral-950: #08090d; // page background
+$neutral-900: #0d0f14;
+$neutral-850: #12151c;
+$neutral-800: #181c25;
+$neutral-750: #1f2430;
+$neutral-700: #2a303d;
+$neutral-600: #3d4554;
+$neutral-400: #8790a2; // 6.2:1
+$neutral-300: #b3bac8; // 10.2:1
+$neutral-50: #f5f6f9; // 18.4:1
+
+// Electric violet. 500 is the fill for primary actions (white label 4.65:1); 400 is the brand
+// reference used for light and decoration; 300 is violet text and focus on dark (8.5:1).
+$violet-300: #ae9bff;
+$violet-400: #7c5cff;
+$violet-500: #7655ff;
+$violet-600: #6a48f5;
+$violet-700: #5f3fe6;
+
+// Electric cyan: secondary accent (9.3:1).
+$cyan-300: #7dd3fc;
+$cyan-400: #38bdf8;
+
+$green-400: #3dd68c; // 10.6:1
+$amber-400: #f5b544; // 11:1
+$red-400: #ff6b70; // 7.2:1
+
+// --- Semantic tokens ---------------------------------------------------------------------
+$color-background-primary: var(--prisma-background);
+$color-background-secondary: var(--prisma-background-secondary);
+$color-background-elevated: var(--prisma-background-elevated);
+
+$color-surface-primary: var(--prisma-surface);
+$color-surface-secondary: var(--prisma-surface-secondary);
+
+$color-border-subtle: var(--prisma-border-subtle);
+$color-border-default: var(--prisma-border);
+$color-border-strong: var(--prisma-border-strong);
+
+$color-text-primary: var(--prisma-text);
+$color-text-secondary: var(--prisma-text-secondary);
+$color-text-muted: var(--prisma-muted);
+$color-text-on-accent: var(--prisma-on-accent);
+
+$color-accent-primary: var(--prisma-accent);
+$color-accent-primary-hover: var(--prisma-accent-hover);
+$color-accent-primary-active: var(--prisma-accent-active);
+$color-accent-primary-text: var(--prisma-accent-text);
+$color-accent-secondary: var(--prisma-accent-secondary);
+
+$color-focus: var(--prisma-focus);
+
+$color-success: var(--prisma-success);
+$color-warning: var(--prisma-warning);
+$color-error: var(--prisma-error);
+$color-info: var(--prisma-info);

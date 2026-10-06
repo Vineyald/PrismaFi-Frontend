@@ -1,0 +1,7 @@
+// Precise, not pillowy: small radii for controls, moderate for cards. Pills only for things
+// that are semantically round (status chips, avatars).
+$radius-xs: 2px; // tags, focus rings on tight elements
+$radius-sm: 6px; // buttons, inputs
+$radius-md: 10px; // cards
+$radius-lg: 16px; // large panels, media frames
+$radius-full: 999px;

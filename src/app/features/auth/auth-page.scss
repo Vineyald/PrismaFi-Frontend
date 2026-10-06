@@ -1,54 +1,82 @@
 // Shared by the login and register pages.
-@use 'tokens' as *;
-@use 'mixins' as *;
+@use 'abstracts' as *;
 
 :host {
+  flex: 1;
   display: grid;
-  place-items: start center;
 }
 
-.auth-card {
+.auth-page {
+  position: relative;
+  isolation: isolate;
   display: grid;
-  gap: $space-6;
-  width: 100%;
-  max-width: 28rem;
-  padding: $space-8 $space-6;
-  border: 1px solid var(--prisma-border);
-  border-radius: $radius-lg;
-  background: var(--prisma-surface);
-  box-shadow: var(--prisma-shadow);
+  place-items: start center;
+  min-height: 100%;
+  padding: $space-12 $space-gutter;
+  overflow: hidden;
+
+  // A faint grid with light from above: the page reads as PrismaFi without competing with
+  // the form.
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: $z-background;
+  }
+
+  &::before {
+    @include backdrop-grid(3rem);
+  }
+
+  &::after {
+    @include backdrop-glow($size: 70% 45%);
+  }
 
   @include breakpoint($bp-md) {
-    padding: $space-8;
+    padding-block: $space-16;
   }
 }
 
-header {
+.auth-card {
+  @include surface;
   display: grid;
-  gap: $space-2;
-}
+  gap: $space-6;
+  width: 100%;
+  max-width: 26rem;
+  padding: $space-8 $space-6;
 
-h1 {
-  font-size: $text-lg;
-  line-height: $leading-tight;
-}
+  @include breakpoint($bp-sm) {
+    padding: $space-10 $space-8;
+  }
 
-.lead,
-.switch {
-  color: var(--prisma-text-muted);
-  font-size: $text-sm;
-}
+  &__header {
+    display: grid;
+    gap: $space-2;
+  }
 
-form {
-  display: grid;
-  gap: $space-4;
-}
+  &__title {
+    @include text-style(h3);
+  }
 
-button {
-  margin-top: $space-2;
-}
+  &__lead,
+  &__switch {
+    @include text-style(body-sm);
+    color: $color-text-secondary;
+  }
 
-.switch a {
-  color: var(--prisma-accent);
-  font-weight: $weight-medium;
+  &__form {
+    display: grid;
+    gap: $space-5;
+  }
+
+  &__submit {
+    width: 100%;
+    margin-top: $space-2;
+  }
+
+  &__link {
+    @include text-style(label);
+    color: $color-accent-primary-text;
+  }
 }

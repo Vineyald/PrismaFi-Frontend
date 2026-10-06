@@ -1,32 +1,36 @@
-<section class="auth-card" aria-labelledby="login-title">
-  <header>
-    <h1 id="login-title">Sign in</h1>
-    <p class="lead">Welcome back to PrismaFi.</p>
-  </header>
+<div class="auth-page">
+  <section class="auth-card" aria-labelledby="login-title">
+    <header class="auth-card__header">
+      <h1 class="auth-card__title" id="login-title">Sign in</h1>
+      <p class="auth-card__lead">Welcome back to PrismaFi.</p>
+    </header>
 
-  @if (failure(); as failure) {
-    <app-inline-alert>{{ failure }}</app-inline-alert>
-  } @else if (noticeMessage(); as notice) {
-    <app-inline-alert [variant]="notice.variant">{{ notice.text }}</app-inline-alert>
-  }
+    @if (failure(); as failure) {
+      <app-inline-alert>{{ failure }}</app-inline-alert>
+    } @else if (noticeMessage(); as notice) {
+      <app-inline-alert [variant]="notice.variant">{{ notice.text }}</app-inline-alert>
+    }
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <app-form-field
-      label="Email"
-      type="email"
-      autocomplete="email"
-      [control]="form.controls.email"
-    />
-    <app-form-field
-      label="Password"
-      type="password"
-      autocomplete="current-password"
-      [control]="form.controls.password"
-    />
-    <button app-button type="submit" [loading]="pending()">
-      {{ pending() ? 'Signing in…' : 'Sign in' }}
-    </button>
-  </form>
+    <form class="auth-card__form" [formGroup]="form" (ngSubmit)="submit()">
+      <app-form-field
+        label="Email"
+        type="email"
+        autocomplete="email"
+        [control]="form.controls.email"
+      />
+      <app-form-field
+        label="Password"
+        type="password"
+        autocomplete="current-password"
+        [control]="form.controls.password"
+      />
+      <button app-button class="auth-card__submit" type="submit" [loading]="pending()">
+        {{ pending() ? 'Signing in…' : 'Sign in' }}
+      </button>
+    </form>
 
-  <p class="switch">New to PrismaFi? <a routerLink="/register">Create an account</a></p>
-</section>
+    <p class="auth-card__switch">
+      New to PrismaFi? <a class="auth-card__link" routerLink="/register">Create an account</a>
+    </p>
+  </section>
+</div>

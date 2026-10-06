@@ -1,0 +1,36 @@
+@use '../abstracts/colors' as *;
+
+// Runtime theme. PrismaFi is dark by design; every semantic color token resolves to one of
+// these properties, so a future theme only has to redefine them.
+:root {
+  color-scheme: dark;
+
+  --prisma-background: #{$neutral-950};
+  --prisma-background-secondary: #{$neutral-900};
+  --prisma-background-elevated: #{$neutral-850};
+
+  --prisma-surface: #{$neutral-850};
+  --prisma-surface-secondary: #{$neutral-800};
+
+  --prisma-border-subtle: #{$neutral-750};
+  --prisma-border: #{$neutral-700};
+  --prisma-border-strong: #{$neutral-600};
+
+  --prisma-text: #{$neutral-50};
+  --prisma-text-secondary: #{$neutral-300};
+  --prisma-muted: #{$neutral-400};
+  --prisma-on-accent: #ffffff;
+
+  --prisma-accent: #{$violet-500};
+  --prisma-accent-hover: #{$violet-600};
+  --prisma-accent-active: #{$violet-700};
+  --prisma-accent-text: #{$violet-300};
+  --prisma-accent-secondary: #{$cyan-400};
+
+  --prisma-focus: #{$violet-300};
+
+  --prisma-success: #{$green-400};
+  --prisma-warning: #{$amber-400};
+  --prisma-error: #{$red-400};
+  --prisma-info: #{$cyan-400};
+}

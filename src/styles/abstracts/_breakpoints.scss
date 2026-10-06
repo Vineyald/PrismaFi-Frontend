@@ -1,16 +1,22 @@
 @use 'sass:map';
 @use 'sass:meta';
-@use 'tokens' as *;
+
+// Mobile-first: styles apply from each width upwards. Base styles target phones (320px+).
+$bp-sm: 640px; // large phones
+$bp-md: 768px; // tablets
+$bp-lg: 1024px; // laptops
+$bp-xl: 1280px; // desktops
+$bp-2xl: 1536px; // large desktops (layouts keep working up to 2560px)
 
 $breakpoints: (
   sm: $bp-sm,
   md: $bp-md,
   lg: $bp-lg,
   xl: $bp-xl,
+  2xl: $bp-2xl,
 );
 
-// Mobile-first media query: styles apply from $min width upwards.
-// $min is a breakpoint name (sm, md, lg, xl) or a length.
+/// Media query from $min upwards. $min is a breakpoint name (sm, md, lg, xl, 2xl) or a length.
 @mixin breakpoint($min) {
   @if map.has-key($breakpoints, $min) {
     $min: map.get($breakpoints, $min);

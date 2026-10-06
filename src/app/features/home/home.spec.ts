@@ -37,7 +37,7 @@ describe('Home API status', () => {
     return {
       fixture,
       status: () => el.querySelector('[role=status]')?.textContent,
-      retryButton: () => el.querySelector<HTMLButtonElement>('button.retry'),
+      retryButton: () => el.querySelector<HTMLButtonElement>('button.home__retry'),
     };
   }
 

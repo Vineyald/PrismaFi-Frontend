@@ -1,0 +1,37 @@
+@use '../abstracts' as *;
+
+body {
+  font-family: $font-sans;
+  @include text-style(body);
+  color: $color-text-primary;
+  background: $color-background-primary;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1 {
+  @include text-style(h1);
+}
+
+h2 {
+  @include text-style(h2);
+}
+
+h3 {
+  @include text-style(h3);
+}
+
+h4 {
+  @include text-style(h4);
+}
+
+a {
+  color: $color-accent-primary-text;
+  text-underline-offset: 0.2em;
+}
+
+::selection {
+  background: rgb(124 92 255 / 40%);
+  color: $color-text-primary;
+}

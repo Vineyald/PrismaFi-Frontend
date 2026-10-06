@@ -45,6 +45,26 @@ describe('Button', () => {
     expect(host.submits).toBe(0);
     expect(button.getAttribute('aria-disabled')).toBe('true');
     expect(button.disabled).toBe(false);
-    expect(button.querySelector('.spinner')).not.toBeNull();
+    expect(button.querySelector('.button__spinner')).not.toBeNull();
+    expect(button.classList).toContain('button--loading');
+  });
+
+  it('is a primary button by default and exposes variants as BEM modifiers', () => {
+    const fixture = TestBed.createComponent(Variants);
+    fixture.detectChanges();
+    const [primary, ghostLink] = (fixture.nativeElement as HTMLElement).querySelectorAll('.button');
+
+    expect([...primary.classList]).toEqual(['button', 'button--primary']);
+    expect(ghostLink.tagName).toBe('A');
+    expect([...ghostLink.classList]).toEqual(['button', 'button--ghost', 'button--small']);
   });
 });
+
+@Component({
+  imports: [Button],
+  template: `
+    <button app-button type="button">Save</button>
+    <a app-button variant="ghost" size="small" href="/login">Sign in</a>
+  `,
+})
+class Variants {}

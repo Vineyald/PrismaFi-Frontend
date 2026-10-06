@@ -29,7 +29,7 @@ describe('FormField', () => {
       control: fixture.componentInstance.email,
       input: el.querySelector('input')!,
       label: el.querySelector('label')!,
-      error: () => el.querySelector('.error'),
+      error: () => el.querySelector('.form-field__error'),
     };
   }
 

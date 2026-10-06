@@ -1,0 +1,16 @@
+// Motion is feedback, not decoration: short, precise, no bounce.
+$duration-fast: 120ms; // hover, press
+$duration-normal: 200ms; // state changes, small reveals
+$duration-slow: 360ms; // panels, page-level transitions
+$duration-slower: 700ms; // large section reveals
+
+$ease-standard: cubic-bezier(0.2, 0, 0, 1); // most transitions
+$ease-enter: cubic-bezier(0.16, 1, 0.3, 1); // elements arriving: fast start, soft landing
+$ease-exit: cubic-bezier(0.4, 0, 1, 1); // elements leaving
+
+/// transition: <props> with the standard duration and easing.
+@mixin transition($properties...) {
+  transition-property: $properties;
+  transition-duration: $duration-fast;
+  transition-timing-function: $ease-standard;
+}
