@@ -8,7 +8,7 @@
   padding-block: $space-section;
 }
 
-// Eyebrow: a short violet rule, then a muted uppercase label. The accent stays a detail.
+// Eyebrow: a short rule, then a muted uppercase label. Neutral: the accent is saved for actions.
 @mixin eyebrow {
   display: inline-flex;
   align-items: center;
@@ -22,7 +22,7 @@
     content: '';
     width: $space-6;
     height: 1px;
-    background: $color-accent-primary-text;
+    background: $color-border-strong;
   }
 }
 
@@ -45,4 +45,66 @@
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: $color-text-muted;
+}
+
+// --- Timeline: items strung on one continuous line, with a node per item -------------------
+// Vertical on small screens, horizontal from $bp. Used by "how it works" and the roadmap.
+$timeline-node: 0.75rem;
+$timeline-inset: 0.375rem; // node offset from the line's start
+$timeline-axis: calc(
+  #{$timeline-inset + $timeline-node * 0.5} - 0.5px
+); // line through node centers
+
+@mixin timeline($bp, $stops...) {
+  position: relative;
+  display: grid;
+  gap: $space-10;
+  padding: 0 0 0 $space-10;
+  list-style: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: $space-2;
+    bottom: $space-2;
+    left: $timeline-axis;
+    width: 1px;
+    background: linear-gradient(to bottom, $stops);
+  }
+
+  @include breakpoint($bp) {
+    gap: $space-8;
+    padding: $space-10 0 0;
+
+    &::before {
+      top: $timeline-axis;
+      bottom: auto;
+      left: 0;
+      right: 0;
+      width: auto;
+      height: 1px;
+      background: linear-gradient(to right, $stops);
+    }
+  }
+}
+
+@mixin timeline-node($bp, $color: $color-border-strong) {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: $space-1;
+    left: calc(-1 * #{$space-10} + #{$timeline-inset});
+    width: $timeline-node;
+    height: $timeline-node;
+    border: 1px solid $color;
+    border-radius: $radius-full;
+    background: $color-background-primary;
+
+    @include breakpoint($bp) {
+      top: calc(-1 * #{$space-10} + #{$timeline-inset});
+      left: 0;
+    }
+  }
 }

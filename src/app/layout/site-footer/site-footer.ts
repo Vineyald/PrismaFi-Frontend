@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BrandMark } from '../brand-mark';
+import { LANDING_SECTIONS } from '../site-header/site-header';
 
 /** Public site footer. Links only to pages and sections that exist. */
 @Component({
@@ -8,7 +9,7 @@ import { BrandMark } from '../brand-mark';
   imports: [RouterLink, BrandMark],
   host: { class: 'site-footer' },
   template: `
-    <div class="site-footer__inner container container--wide">
+    <footer class="site-footer__inner container container--wide">
       <div class="site-footer__brand">
         <a class="site-footer__logo" routerLink="/">
           <app-brand-mark />
@@ -21,11 +22,13 @@ import { BrandMark } from '../brand-mark';
         <div class="site-footer__group">
           <h2 class="site-footer__heading">Product</h2>
           <ul class="site-footer__links">
-            <li><a class="site-footer__link" routerLink="/" fragment="product">Overview</a></li>
-            <li>
-              <a class="site-footer__link" routerLink="/" fragment="intelligence">Intelligence</a>
-            </li>
-            <li><a class="site-footer__link" routerLink="/" fragment="roadmap">Roadmap</a></li>
+            @for (section of sections; track section.fragment) {
+              <li>
+                <a class="site-footer__link" routerLink="/" [fragment]="section.fragment">
+                  {{ section.label }}
+                </a>
+              </li>
+            }
           </ul>
         </div>
         <div class="site-footer__group">
@@ -38,8 +41,10 @@ import { BrandMark } from '../brand-mark';
       </nav>
 
       <p class="site-footer__copyright">© 2026 PrismaFi</p>
-    </div>
+    </footer>
   `,
   styleUrl: './site-footer.scss',
 })
-export class SiteFooter {}
+export class SiteFooter {
+  protected readonly sections = LANDING_SECTIONS;
+}

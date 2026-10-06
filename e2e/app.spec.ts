@@ -1,5 +1,18 @@
 import { expect, test, type Page } from '@playwright/test';
 
+// Fully visible: in the viewport and not hidden under the sticky header.
+async function expectBelowHeader(page: Page, name: string) {
+  const heading = page.getByRole('heading', { name });
+  await expect(heading).toBeInViewport();
+  await expect
+    .poll(async () => {
+      const header = await page.getByRole('banner').boundingBox();
+      const box = await heading.boundingBox();
+      return box && header ? box.y - (header.y + header.height) : -1;
+    })
+    .toBeGreaterThanOrEqual(0);
+}
+
 const noOverflow = (page: Page) =>
   page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
 
@@ -45,14 +58,30 @@ test.describe('landing page', () => {
 
     await nav.getByRole('link', { name: 'Roadmap' }).click();
     await expect(page).toHaveURL('/#roadmap');
-    await expect(page.getByRole('heading', { name: 'The foundation first.' })).toBeInViewport();
+    await expectBelowHeader(page, 'The foundation first.');
 
     await page.getByRole('banner').getByRole('link', { name: 'Sign in' }).click();
     await expect(page).toHaveURL('/login');
     // Section links work from other pages too.
     await nav.getByRole('link', { name: 'Security' }).click();
     await expect(page).toHaveURL('/#security');
-    await expect(page.getByRole('heading', { name: 'Financial clarity starts' })).toBeInViewport();
+    await expectBelowHeader(page, 'Financial clarity starts');
+
+    // The footer links to the same sections.
+    await page.getByRole('contentinfo').getByRole('link', { name: 'Intelligence' }).click();
+    await expect(page).toHaveURL('/#intelligence');
+    await expectBelowHeader(page, 'Your data should explain itself.');
+  });
+
+  test('skip link moves focus past the header to the content', async ({ page }) => {
+    await page.goto('/login');
+
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused();
+    await page.keyboard.press('Enter');
+
+    await expect(page.locator('main')).toBeFocused();
+    await expect(page).toHaveURL('/login');
   });
 
   test('mobile menu opens, navigates and closes with Escape', async ({ page }) => {

@@ -8,6 +8,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ViewportScroller } from '@angular/common';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
 import { Auth } from '../../core/auth/auth';
@@ -54,6 +55,11 @@ export class SiteHeader {
         takeUntilDestroyed(),
       )
       .subscribe(() => this.menuOpen.set(false));
+
+    // Anchor links (/#section) scroll with JavaScript, which ignores CSS scroll-padding:
+    // land sections below this sticky header instead of under it.
+    const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    inject(ViewportScroller).setOffset(() => [0, host.offsetHeight + 16]);
 
     // A 1px marker at the top of the page: once it leaves the viewport, the page has scrolled.
     // Cheaper than a scroll listener, and fires only when the state flips.

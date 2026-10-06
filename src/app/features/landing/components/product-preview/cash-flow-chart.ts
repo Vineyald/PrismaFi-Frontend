@@ -18,7 +18,7 @@ const HEIGHT = 120;
   host: { class: 'cash-flow-chart' },
   template: `
     <header class="cash-flow-chart__header">
-      <h3 class="cash-flow-chart__title" id="preview-cash-flow">Cash flow</h3>
+      <h3 class="cash-flow-chart__title">Cash flow</h3>
       <ul class="legend">
         <li class="legend__item cash-flow-chart__series--income">Income</li>
         <li class="legend__item cash-flow-chart__series--expenses">Expenses</li>
@@ -26,7 +26,7 @@ const HEIGHT = 120;
     </header>
     <svg
       class="cash-flow-chart__svg"
-      [attr.viewBox]="'0 0 360 ' + (height + 24)"
+      [attr.viewBox]="'0 0 360 ' + (height + 2)"
       role="img"
       aria-label="Cash flow from January to June: income stays above expenses every month."
     >
@@ -55,11 +55,13 @@ const HEIGHT = 120;
           [attr.height]="bar.expenses"
           rx="2"
         />
-        <text class="cash-flow-chart__month" [attr.x]="bar.x + 18" [attr.y]="height + 18">
-          {{ bar.month }}
-        </text>
       }
     </svg>
+    <ol class="cash-flow-chart__months" aria-hidden="true">
+      @for (bar of bars; track bar.month) {
+        <li>{{ bar.month }}</li>
+      }
+    </ol>
   `,
   styles: `
     @use 'abstracts' as *;
@@ -87,7 +89,7 @@ const HEIGHT = 120;
       }
 
       &__series--expenses {
-        --legend-swatch: #{$color-border-default};
+        --legend-swatch: #{$color-border-strong};
       }
 
       &__svg {
@@ -108,15 +110,22 @@ const HEIGHT = 120;
           fill: $color-accent-primary-text;
         }
 
+        // Contrast >= 3:1 against the panel (WCAG 1.4.11).
         &--expenses {
-          fill: $color-border-default;
+          fill: $color-border-strong;
         }
       }
 
-      &__month {
-        font-size: 8px;
-        text-anchor: middle;
-        fill: $color-text-muted;
+      // Real text under the chart: readable at any width, unlike SVG text that scales.
+      &__months {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        margin-top: -$space-2;
+        padding: 0;
+        list-style: none;
+        text-align: center;
+        @include text-style(caption);
+        color: $color-text-muted;
       }
     }
   `,

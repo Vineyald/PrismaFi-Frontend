@@ -31,7 +31,11 @@ export type ThreeSceneFactory = (three: typeof Three) => ThreeScene;
 
 type ThreeCanvasState = 'idle' | 'running' | 'static' | 'unsupported';
 
-const MAX_PIXEL_RATIO = 2; // sharper than 2x costs fill rate with no visible gain
+// Sharper than 2x costs fill rate with no visible gain; very wide canvases (full-bleed heroes on
+// large screens) are capped lower, since they are decorative and already large.
+const MAX_PIXEL_RATIO = 2;
+const WIDE_CANVAS = 1600;
+const WIDE_MAX_PIXEL_RATIO = 1.5;
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 
 /**
@@ -39,7 +43,7 @@ const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
  *
  * - Loads `three` only in the browser, after first render, once the canvas nears the viewport.
  * - Animates only while visible; with reduced motion it renders one static frame.
- * - Follows the element's size and caps the device pixel ratio at 2.
+ * - Follows the element's size and caps the device pixel ratio at 2 (1.5 above 1600px wide).
  * - On destroy, stops the loop and frees renderer, geometries, materials and textures.
  * - Without WebGL it stays empty (`data-state="unsupported"`): give the host a CSS fallback.
  *
@@ -124,13 +128,13 @@ export class ThreeCanvas {
         canvas: this.canvas().nativeElement,
         antialias: true,
         alpha: true,
-        powerPreference: 'high-performance',
+        // Decorative scenes should not wake a discrete GPU on laptops.
+        powerPreference: 'low-power',
       });
     } catch {
       this.state.set('unsupported');
       return undefined;
     }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO));
 
     teardown.push(() => {
       renderer.setAnimationLoop(null);
@@ -155,6 +159,8 @@ export class ThreeCanvas {
     const resize = () => {
       const { clientWidth: width, clientHeight: height } = this.host;
       if (!width || !height) return;
+      const maxRatio = width > WIDE_CANVAS ? WIDE_MAX_PIXEL_RATIO : MAX_PIXEL_RATIO;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxRatio));
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();

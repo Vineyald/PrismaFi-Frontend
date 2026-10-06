@@ -7,8 +7,11 @@ import { SiteHeader } from './layout/site-header/site-header';
   selector: 'app-root',
   imports: [RouterOutlet, SiteHeader, SiteFooter],
   template: `
+    <a class="skip-link" href="#main" (click)="$event.preventDefault(); main.focus()">
+      Skip to content
+    </a>
     <app-site-header />
-    <main class="app-main" id="main">
+    <main #main class="app-main" id="main" tabindex="-1">
       <router-outlet />
     </main>
     <app-site-footer />

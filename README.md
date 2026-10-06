@@ -21,20 +21,20 @@ O backend fica em um repositório separado (`PrismaFi-Backend`). Os dois se inte
 
 ## Stack tecnológica
 
-| Tecnologia                                 | Por que está aqui                                                                                                                         | Status                                                         |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| **Angular 22**                             | Framework da aplicação: componentes standalone, Signals, router, HttpClient. Zoneless por padrão.                                         | instalado                                                      |
-| **TypeScript 6** (strict)                  | Tipagem de ponta a ponta, incluindo os tipos gerados a partir do schema OpenAPI do backend. `strict` e `strictTemplates` ativados.        | instalado                                                      |
-| **SCSS**                                   | O design system próprio do PrismaFi: tokens de compilação e CSS custom properties para temas em runtime.                                  | instalado                                                      |
-| **Signals**                                | Estado local e compartilhado com `signal`, `computed` e `httpResource`. Sem NgRx e sem stores de BehaviorSubject.                         | em uso                                                         |
-| **Vitest**                                 | Testes unitários e de componentes, pelo builder `@angular/build:unit-test` com jsdom.                                                     | instalado                                                      |
-| **Playwright**                             | Testes end-to-end em navegador real (o Google Chrome instalado).                                                                          | instalado                                                      |
-| **ESLint** (angular-eslint) + **Prettier** | Lint, incluindo regras de acessibilidade nos templates, e formatação.                                                                     | instalado                                                      |
-| **Angular CDK**                            | Primitivas de comportamento e acessibilidade (overlays, focus trap, a11y) sob o visual próprio do PrismaFi.                               | planejado: instalar com o primeiro overlay ou menu             |
-| **Lucide**                                 | Conjunto de ícones.                                                                                                                       | planejado: instalar com o primeiro ícone                       |
-| **Three.js**                               | Cenas 3D da identidade (prismas da landing page), carregadas por import dinâmico só quando o canvas aparece. Ver `docs/design-system.md`. | instalado                                                      |
-| **Inter** (`@fontsource-variable/inter`)   | Fonte da interface, auto-hospedada (sem requisição a terceiros), com algarismos tabulares.                                                | instalado                                                      |
-| **Apache ECharts**                         | Gráficos financeiros.                                                                                                                     | planejado: instalar com o primeiro gráfico que realmente ajude |
+| Tecnologia                                 | Por que está aqui                                                                                                                           | Status                                                         |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **Angular 22**                             | Framework da aplicação: componentes standalone, Signals, router, HttpClient. Zoneless por padrão.                                           | instalado                                                      |
+| **TypeScript 6** (strict)                  | Tipagem de ponta a ponta, incluindo os tipos gerados a partir do schema OpenAPI do backend. `strict` e `strictTemplates` ativados.          | instalado                                                      |
+| **SCSS**                                   | O design system próprio do PrismaFi: tokens de compilação e CSS custom properties para temas em runtime.                                    | instalado                                                      |
+| **Signals**                                | Estado local e compartilhado com `signal` e `computed` (`httpResource` é o padrão para leituras). Sem NgRx e sem stores de BehaviorSubject. | em uso                                                         |
+| **Vitest**                                 | Testes unitários e de componentes, pelo builder `@angular/build:unit-test` com jsdom.                                                       | instalado                                                      |
+| **Playwright**                             | Testes end-to-end em navegador real (o Google Chrome instalado).                                                                            | instalado                                                      |
+| **ESLint** (angular-eslint) + **Prettier** | Lint, incluindo regras de acessibilidade nos templates, e formatação.                                                                       | instalado                                                      |
+| **Angular CDK**                            | Primitivas de comportamento e acessibilidade (overlays, focus trap, a11y) sob o visual próprio do PrismaFi.                                 | planejado: instalar com o primeiro overlay ou menu             |
+| **Lucide**                                 | Conjunto de ícones.                                                                                                                         | planejado: instalar com o primeiro ícone                       |
+| **Three.js**                               | Cenas 3D da identidade (prismas da landing page), carregadas por import dinâmico só quando o canvas aparece. Ver `docs/design-system.md`.   | instalado                                                      |
+| **Inter** (`@fontsource-variable/inter`)   | Fonte da interface, auto-hospedada (sem requisição a terceiros), com algarismos tabulares.                                                  | instalado                                                      |
+| **Apache ECharts**                         | Gráficos financeiros.                                                                                                                       | planejado: instalar com o primeiro gráfico que realmente ajude |
 
 Pacotes planejados só são instalados quando um componente precisa deles, seguindo a regra do projeto contra dependências sem uso.
 
@@ -93,7 +93,7 @@ PrismaFi-Frontend/
 | `core/`            | Infraestrutura não visual, usada pela aplicação inteira. Hoje: o contrato gerado da API e `core/auth/` (chamadas de autenticação e token em memória); o interceptor, os guards e o estado de sessão completo entram ali nas próximas entregas da Fase 1. `features/auth/` contém só as telas e usa `core/auth/`; `core/` nunca importa features. |
 | `features/<nome>/` | Uma pasta por área do produto, cada uma com sua rota lazy, componentes, estilos e specs. Uma feature nunca importa detalhes internos de outra.                                                                                                                                                                                                   |
 | `styles/`          | Camada global do design system.                                                                                                                                                                                                                                                                                                                  |
-| `layout/`          | Layout público (header, footer), usado pela landing page e pelas telas de autenticação. O layout autenticado entra aqui quando existir a área logada.                                                                                                                                                                                            |
+| `layout/`          | Layout público (header, footer), usado pela landing page e pelas telas de autenticação. O layout autenticado entra aqui quando existir a área logada. Pode usar `core/` e `shared/`; nunca importa features.                                                                                                                                     |
 | `app.ts`           | O shell: só monta o layout em volta do `<router-outlet>`.                                                                                                                                                                                                                                                                                        |
 
 `shared/ui/` contém os componentes de UI reutilizáveis, sem dependência de `core/` ou de features:
@@ -187,7 +187,7 @@ Angular (localhost:4200) --REST /api/*--> proxy de desenvolvimento do Angular --
 
   Faça commit do arquivo gerado e gere de novo sempre que o contrato do backend mudar. Um erro de compilação depois de gerar significa que o contrato mudou por baixo do seu código, e é exatamente para isso que ele serve. As fixtures de teste usam `satisfies` com os mesmos tipos, então os stubs deixam de compilar quando o contrato muda.
 
-  _Por que não o OpenAPI Generator?_ Ele exige Java e gera um cliente grande, com services e models para cada endpoint. Com apenas `/api/health`, um arquivo de tipos gerado mais o HttpClient do Angular é a opção mais simples de manter. Vale reavaliar se as chamadas escritas à mão começarem a se repetir.
+  _Por que não o OpenAPI Generator?_ Ele exige Java e gera um cliente grande, com services e models para cada endpoint. Com poucos endpoints, um arquivo de tipos gerado mais o HttpClient do Angular é a opção mais simples de manter. Vale reavaliar se as chamadas escritas à mão começarem a se repetir.
 
 ## Proxy de desenvolvimento
 
@@ -252,7 +252,7 @@ Com eventos de auditoria registrados para as ações financeiras críticas. O MV
 
 - [x] Angular 22 standalone e zoneless, com TypeScript `strict` e `strictTemplates`
 - [x] Rotas lazy (`loadComponent`) com redirecionamento de rotas desconhecidas
-- [x] Signals e `httpResource` em uso (status da API na tela inicial)
+- [x] Signals e `httpResource` em uso (status da API na tela inicial, substituída depois pela landing page)
 - [x] Base do design system em SCSS: tokens, tema via custom properties, reset e mixin de breakpoint (substituída pela identidade visual definitiva, escura, descrita em `docs/design-system.md`)
 - [x] Shell mínimo e tela inicial responsivos
 - [x] Proxy de desenvolvimento `/api` para o backend

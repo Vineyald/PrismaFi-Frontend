@@ -1,3 +1,5 @@
+@use 'abstracts' as *;
+
 :host {
   display: flex;
   flex-direction: column;
@@ -9,4 +11,25 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+// Hidden until focused: the first Tab stop jumps past the header to the content.
+.skip-link {
+  position: absolute;
+  top: $space-2;
+  left: $space-2;
+  z-index: $z-overlay;
+  padding: $space-2 $space-4;
+  border-radius: $radius-sm;
+  background: $color-surface-secondary;
+  color: $color-text-primary;
+  transform: translateY(-200%);
+
+  &:focus {
+    transform: none;
+  }
+}
+
+.app-main:focus {
+  outline: none;
 }

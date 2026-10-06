@@ -77,9 +77,11 @@ function build(three: typeof Three, pointer: PointerState): ThreeScene {
   fill.position.set(0, 3, 5);
   rig.add(key, rim, fill);
 
-  // Signals enter at the left face and leave at the right face (prism-local x).
-  const entry = new three.Vector3(-0.5, 0, 0);
-  const exit = new three.Vector3(0.55, 0, 0);
+  // Signals enter at the middle of the left face and leave from the right face. Face centers
+  // are prism-local (apex up), mapped into rig space through the prism's rotation.
+  prismGroup.updateMatrix();
+  const entry = new three.Vector3(-0.455, 0.26, 0).applyMatrix4(prismGroup.matrix);
+  const exit = new three.Vector3(0.455, 0.26, 0).applyMatrix4(prismGroup.matrix);
 
   // --- Incoming signals: scattered streaks converging on the prism -------------------------
   const count = SIGNALS[detail];
@@ -97,17 +99,28 @@ function build(three: typeof Three, pointer: PointerState): ThreeScene {
 
   const head = new three.Color(PRISM_PALETTE.edge);
   const tail = new three.Color(PRISM_PALETTE.background);
+  // Scratch objects reused every frame: no per-frame allocations, no GC stutter.
+  const near = new three.Color();
+  const scratch = new three.Vector3();
   const writeSignals = () => {
-    signals.forEach((signal, i) => {
-      const back = signal.direction.clone().multiplyScalar(-TRAIL).add(signal.position);
-      positions.set([signal.position.x, signal.position.y, signal.position.z], i * 6);
-      positions.set([back.x, back.y, back.z], i * 6 + 3);
+    signals.forEach(({ position, direction }, i) => {
+      const o = i * 6;
+      positions[o] = position.x;
+      positions[o + 1] = position.y;
+      positions[o + 2] = position.z;
+      positions[o + 3] = position.x - direction.x * TRAIL;
+      positions[o + 4] = position.y - direction.y * TRAIL;
+      positions[o + 5] = position.z - direction.z * TRAIL;
       // Invisible far out, sharpening as they approach the prism: noise becoming signal.
       // Keeps the area behind the headline calm.
-      const closeness = 1 - Math.min(signal.position.distanceTo(entry) / 3.6, 1);
-      const strength = 0.6 * closeness * closeness;
-      const near = tail.clone().lerp(head, strength);
-      colors.set([near.r, near.g, near.b, tail.r, tail.g, tail.b], i * 6);
+      const closeness = 1 - Math.min(position.distanceTo(entry) / 3.6, 1);
+      near.lerpColors(tail, head, 0.6 * closeness * closeness);
+      colors[o] = near.r;
+      colors[o + 1] = near.g;
+      colors[o + 2] = near.b;
+      colors[o + 3] = tail.r;
+      colors[o + 4] = tail.g;
+      colors[o + 5] = tail.b;
     });
     streakGeometry.attributes['position'].needsUpdate = true;
     streakGeometry.attributes['color'].needsUpdate = true;
@@ -115,17 +128,11 @@ function build(three: typeof Three, pointer: PointerState): ThreeScene {
   writeSignals();
 
   // --- Outgoing rays: four ordered lines, two violet and two cyan, fading to the right ------
-  const rayColors = [
-    PRISM_PALETTE.keyLight,
-    PRISM_PALETTE.keyLight,
-    PRISM_PALETTE.rimLight,
-    PRISM_PALETTE.rimLight,
-  ];
   const rays = OUTPUT_OFFSETS.map((offset, i) => {
     const start = exit.clone().add(new three.Vector3(0, offset * 0.35, 0));
     const end = new three.Vector3(exit.x + RAY_LENGTH, offset * 2.4, 0);
     const geometry = new three.BufferGeometry().setFromPoints([start, end]);
-    const color = new three.Color(rayColors[i]);
+    const color = new three.Color(i < 2 ? PRISM_PALETTE.keyLight : PRISM_PALETTE.rimLight);
     geometry.setAttribute(
       'color',
       new three.Float32BufferAttribute([color.r, color.g, color.b, tail.r, tail.g, tail.b], 3),
@@ -159,8 +166,7 @@ function build(three: typeof Three, pointer: PointerState): ThreeScene {
     for (const ray of rays) {
       for (let p = 0; p < PACKETS_PER_RAY; p++) {
         const t = ((elapsed * 0.08 + p / PACKETS_PER_RAY) % 1) * 0.7;
-        const point = ray.start.clone().lerp(ray.end, t);
-        packetPositions.set([point.x, point.y, point.z], i++ * 3);
+        scratch.lerpVectors(ray.start, ray.end, t).toArray(packetPositions, i++ * 3);
       }
     }
     packetGeometry.attributes['position'].needsUpdate = true;
@@ -168,6 +174,8 @@ function build(three: typeof Three, pointer: PointerState): ThreeScene {
   writePackets(0);
 
   const baseRotation = { x: prismGroup.rotation.x, y: prismGroup.rotation.y };
+  // Eased copy of the pointer, so leaving the hero never snaps the prism back.
+  const eased = { x: 0, y: 0 };
 
   return {
     scene,
@@ -176,25 +184,29 @@ function build(three: typeof Three, pointer: PointerState): ThreeScene {
       for (const signal of signals) {
         signal.position.addScaledVector(signal.direction, signal.speed * delta);
         // Steer towards the prism: scattered at first, converging as they near it.
-        const toEntry = entry.clone().sub(signal.position).normalize();
-        signal.direction.lerp(toEntry, Math.min(delta * 0.9, 1)).normalize();
+        scratch.subVectors(entry, signal.position).normalize();
+        signal.direction.lerp(scratch, Math.min(delta * 0.9, 1)).normalize();
         if (signal.position.distanceTo(entry) < 0.18) Object.assign(signal, spawn(three, entry));
       }
       writeSignals();
       writePackets(elapsed);
 
-      // A slow sway plus a restrained response to the pointer (desktop only).
-      prismGroup.rotation.y = baseRotation.y + Math.sin(elapsed * 0.25) * 0.06 + pointer.x * 0.1;
-      prismGroup.rotation.x = baseRotation.x + Math.sin(elapsed * 0.18) * 0.03 - pointer.y * 0.06;
-      camera.position.x += (pointer.x * 0.35 - camera.position.x) * Math.min(delta * 2, 1);
-      camera.position.y += (0.35 - pointer.y * 0.2 - camera.position.y) * Math.min(delta * 2, 1);
+      // A slow sway plus a restrained, eased response to the pointer (mouse only).
+      const ease = Math.min(delta * 2, 1);
+      eased.x += (pointer.x - eased.x) * ease;
+      eased.y += (pointer.y - eased.y) * ease;
+      prismGroup.rotation.y = baseRotation.y + Math.sin(elapsed * 0.25) * 0.06 + eased.x * 0.1;
+      prismGroup.rotation.x = baseRotation.x + Math.sin(elapsed * 0.18) * 0.03 - eased.y * 0.06;
+      camera.position.x = eased.x * 0.35;
+      camera.position.y = 0.35 - eased.y * 0.2;
       camera.lookAt(rig.position.x * 0.5, 0, 0);
     },
     resize(width, height) {
       const aspect = width / height;
       // Laptops up (canvas behind the copy): the prism sits in the right half, the camera
       // backing off on squarer screens. Smaller screens (canvas under the copy): centered.
-      if (width >= 1024) {
+      // Same test as the CSS breakpoint (viewport incl. scrollbar), not the canvas width.
+      if (window.matchMedia('(min-width: 64rem)').matches) {
         const square = aspect < 1.7;
         camera.position.z = square ? 13 : 10;
         const halfWidth = Math.tan(((camera.fov / 2) * Math.PI) / 180) * camera.position.z * aspect;

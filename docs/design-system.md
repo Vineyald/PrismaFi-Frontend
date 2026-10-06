@@ -154,7 +154,7 @@ Regras:
 
 - Aninhamento raso: `&__elemento` e `&--modificador`; descendentes só no padrão `&--mod &__elemento`. Nunca seletores presos à estrutura do DOM (`.page div form input`).
 - Um bloco por componente. Em `shared/ui/` o bloco tem o nome do componente (`button`, `form-field`, `inline-alert`) e o componente usa `ViewEncapsulation.None`: o nome do bloco já isola o CSS, e as classes ficam no próprio host (`<button class="button button--primary">`).
-- Páginas e features usam o encapsulamento padrão do Angular, com blocos próprios (`auth-page`, `auth-card`, `home`, `api-status`).
+- Páginas e features usam o encapsulamento padrão do Angular, com blocos próprios (`auth-page`, `auth-card`, `site-header`, `hero`, `roadmap`).
 - Atributos ARIA continuam sendo a fonte de verdade para acessibilidade (`aria-invalid`, `aria-disabled`); o modificador BEM é só para estilo.
 
 ## Componentes base (`shared/ui/`)
@@ -262,7 +262,7 @@ A ideia guia: **infraestrutura financeira visualizada como geometria de precisã
 - Carrega o `three` por import dinâmico, só no navegador (`afterNextRender`), quando o canvas chega perto da viewport. Nada de Three.js no bundle inicial.
 - Anima só enquanto visível (`IntersectionObserver`); fora da tela, para o loop.
 - Com `prefers-reduced-motion: reduce`, renderiza um quadro estático (e reage se a preferência mudar).
-- Acompanha o tamanho do elemento (`ResizeObserver`) e limita o device pixel ratio a 2.
+- Acompanha o tamanho do elemento (`ResizeObserver`) e limita o device pixel ratio a 2 (1,5 em canvas com mais de 1600px de largura). Pede a GPU de baixo consumo (`powerPreference: 'low-power'`): cenas decorativas não acordam a GPU dedicada de notebooks.
 - Ao destruir: para o loop, chama o `dispose` da cena, libera geometrias, materiais e texturas, o renderer e o contexto WebGL.
 - Sem WebGL, se o chunk do `three` não carregar ou se a cena lançar erro, fica vazio com `data-state="unsupported"` (o contexto WebGL é liberado): dê ao host um fundo CSS de fallback (ex.: `backdrop-glow`).
 - O canvas é decorativo (`aria-hidden`); o significado fica no conteúdo ao redor.

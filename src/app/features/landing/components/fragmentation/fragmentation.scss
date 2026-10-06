@@ -45,6 +45,12 @@
     display: none;
   }
 
+  &__sample {
+    @include sample-label;
+    margin-top: $space-8;
+    text-align: right;
+  }
+
   &__nodes {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -93,7 +99,6 @@
       stroke: $color-border-strong;
       stroke-width: 1;
       stroke-dasharray: 3 5;
-      vector-effect: non-scaling-stroke;
 
       path {
         vector-effect: non-scaling-stroke;
@@ -104,9 +109,17 @@
       display: block;
     }
 
+    &__sample {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      margin: 0;
+    }
+
     &__node {
       position: absolute;
-      left: var(--x);
+      // Never past the column's right edge, however narrow the column gets.
+      left: min(var(--x), calc(100% - 11rem));
       top: var(--y);
       min-width: 11rem;
 

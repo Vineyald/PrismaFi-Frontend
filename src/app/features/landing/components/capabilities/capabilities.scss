@@ -27,6 +27,14 @@
   &__title {
     @include title;
   }
+
+  &__text {
+    @include lead;
+  }
+
+  &__link {
+    color: $color-accent-primary-text;
+  }
 }
 
 // One capability per row; text and visual swap sides from row to row on wide screens.
@@ -50,8 +58,10 @@
   }
 
   &__name {
-    @include text-style(label);
-    color: $color-accent-primary-text;
+    @include text-style(caption);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: $color-text-muted;
   }
 
   &__title {
@@ -157,7 +167,8 @@
 
   &__category {
     display: grid;
-    gap: 2px;
+    justify-items: start;
+    gap: $space-1;
     padding: $space-2 $space-3;
     border: 1px solid $color-border-default;
     border-left: 2px solid $color-accent-primary-text;
@@ -171,42 +182,8 @@
     color: $color-text-muted;
   }
 
-  &__goal {
-    position: relative;
-    display: grid;
-    place-items: center;
-    justify-self: center;
-    width: min(100%, 15rem);
-  }
-
-  &__ring {
-    width: 100%;
-  }
-
-  &__ring-tick {
-    stroke: $color-border-default;
-    stroke-width: 2;
-    stroke-linecap: round;
-
-    &--done {
-      stroke: $color-accent-secondary;
-    }
-  }
-
-  &__goal-text {
-    position: absolute;
-    display: grid;
-    justify-items: center;
-  }
-
-  &__goal-value {
-    @include text-style(h3);
-    @include numeric;
-  }
-
-  &__goal-detail {
-    @include text-style(caption);
-    @include numeric;
-    color: $color-text-muted;
+  &__sample {
+    @include sample-label;
+    text-align: right;
   }
 }

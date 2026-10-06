@@ -14,7 +14,7 @@
 
   @include breakpoint($bp-lg) {
     align-items: center;
-    min-height: min(calc(100svh - 4rem), 56rem);
+    min-height: min(calc(100svh - #{$header-height}), 56rem);
     padding-block: $space-16 $space-24;
   }
 
