@@ -18,7 +18,7 @@
   background: var(--prisma-surface);
   box-shadow: var(--prisma-shadow);
 
-  @include breakpoint(md) {
+  @include breakpoint($bp-md) {
     padding: $space-8;
   }
 }

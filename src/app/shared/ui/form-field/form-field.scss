@@ -16,7 +16,7 @@ label {
 }
 
 input {
-  min-height: 2.75rem;
+  min-height: $control-height;
   padding: $space-2 $space-3;
   border: 1px solid var(--prisma-border);
   border-radius: $radius-sm;
@@ -65,6 +65,6 @@ input {
   border-radius: $radius-full;
   background: var(--prisma-danger);
   color: var(--prisma-surface);
-  font-size: 0.7rem;
+  font-size: $text-xs;
   font-weight: $weight-bold;
 }

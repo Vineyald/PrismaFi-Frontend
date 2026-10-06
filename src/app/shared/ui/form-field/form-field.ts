@@ -17,7 +17,7 @@ const MESSAGES: Record<string, (label: string, error: { requiredLength?: number 
  *
  * Shows the control's first error once it is touched. Built-in validators have default
  * messages; any other error carries its message as its value, e.g.
- * `{ passwordMismatch: 'Passwords do not match.' }` or a server error `{ server: '...' }`.
+ * `{ mismatch: 'Passwords do not match.' }` or a server error `{ server: '...' }`.
  */
 @Component({
   selector: 'app-form-field',
