@@ -1,0 +1,197 @@
+@use 'abstracts' as *;
+@use '../../landing' as *;
+
+:host {
+  @include section;
+}
+
+.product-preview {
+  &__inner {
+    display: grid;
+    gap: $space-12;
+  }
+
+  &__copy {
+    display: grid;
+    justify-items: center;
+    gap: $space-5;
+    text-align: center;
+  }
+
+  &__eyebrow {
+    @include eyebrow;
+  }
+
+  &__title {
+    @include title;
+  }
+
+  // The window: an app surface, lit from above like the rest of the identity.
+  &__window {
+    overflow: hidden;
+    border: 1px solid $color-border-default;
+    border-radius: $radius-lg;
+    background: $color-background-secondary;
+    box-shadow: $shadow-highlight, $shadow-lg;
+  }
+
+  &__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-2;
+    padding: $space-3 $space-5;
+    border-bottom: 1px solid $color-border-subtle;
+  }
+
+  &__window-title {
+    @include text-style(label);
+  }
+
+  &__sample {
+    @include sample-label;
+  }
+
+  &__body {
+    display: grid;
+
+    @include breakpoint($bp-lg) {
+      grid-template-columns: 12rem 1fr;
+    }
+  }
+
+  &__sidebar {
+    display: none;
+    padding: $space-5 $space-3;
+    border-right: 1px solid $color-border-subtle;
+    list-style: none;
+
+    @include breakpoint($bp-lg) {
+      display: grid;
+      align-content: start;
+      gap: $space-1;
+    }
+  }
+
+  &__nav-item {
+    padding: $space-2 $space-3;
+    border-radius: $radius-sm;
+    @include text-style(body-sm);
+    color: $color-text-muted;
+
+    &--active {
+      background: $color-surface-secondary;
+      color: $color-text-primary;
+    }
+  }
+
+  &__main {
+    display: grid;
+    gap: $space-4;
+    padding: $space-4;
+
+    @include breakpoint($bp-md) {
+      gap: $space-5;
+      padding: $space-6;
+    }
+  }
+
+  &__metrics {
+    display: grid;
+    gap: $space-3;
+
+    @include breakpoint($bp-sm) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @include breakpoint($bp-xl) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  &__metric {
+    display: grid;
+    gap: $space-1;
+    padding: $space-4;
+    border: 1px solid $color-border-subtle;
+    border-radius: $radius-md;
+    background: $color-surface-primary;
+  }
+
+  &__metric-label {
+    @include text-style(caption);
+    color: $color-text-muted;
+  }
+
+  &__metric-value {
+    @include numeric;
+    font-size: clamp(1rem, 0.85rem + 0.6vw, 1.25rem);
+    font-weight: $weight-semibold;
+    white-space: nowrap;
+  }
+
+  &__panels {
+    display: grid;
+    gap: $space-4;
+
+    @include breakpoint($bp-lg) {
+      grid-template-columns: 3fr 2fr;
+      gap: $space-5;
+    }
+  }
+
+  &__panel {
+    display: grid;
+    align-content: start;
+    gap: $space-4;
+    padding: $space-4 $space-5;
+    border: 1px solid $color-border-subtle;
+    border-radius: $radius-md;
+    background: $color-surface-primary;
+  }
+
+  &__panel-title {
+    @include text-style(label);
+  }
+
+  &__activity {
+    display: grid;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__entry {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: $space-3;
+    padding-block: $space-3;
+    border-bottom: 1px solid $color-border-subtle;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  &__entry-name {
+    @include text-style(label);
+  }
+
+  &__entry-category {
+    grid-row: 2;
+    @include text-style(caption);
+    color: $color-text-muted;
+  }
+
+  &__entry-amount {
+    grid-row: 1 / 3;
+    grid-column: 2;
+    align-self: center;
+    @include text-style(label);
+    @include numeric;
+
+    &--incoming {
+      color: $color-success;
+    }
+  }
+}

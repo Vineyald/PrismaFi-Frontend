@@ -1,0 +1,44 @@
+<section class="fragmentation" aria-labelledby="fragmentation-title">
+  <div class="fragmentation__inner container container--wide">
+    <div class="fragmentation__copy" appReveal>
+      <p class="fragmentation__eyebrow">Your money is everywhere</p>
+      <h2 class="fragmentation__title" id="fragmentation-title">
+        Your financial life shouldn't feel fragmented.
+      </h2>
+      <p class="fragmentation__text">
+        Accounts, transfers, subscriptions, bills and everyday spending often live in different
+        places. Understanding the whole picture means jumping between apps, statements and
+        spreadsheets.
+      </p>
+      <p class="fragmentation__text fragmentation__text--emphasis">
+        PrismaFi is being built to bring that information together and turn scattered activity into
+        a financial picture you can actually understand.
+      </p>
+    </div>
+
+    <div class="fragmentation__field" appReveal>
+      <!-- Connections that never quite connect. -->
+      <svg
+        class="fragmentation__links"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <path d="M18 18 L30 30" />
+        <path d="M44 44 L52 30" />
+        <path d="M64 12 L70 30" />
+        <path d="M40 50 L48 66" />
+        <path d="M80 56 L72 74" />
+        <path d="M14 80 L24 62" />
+      </svg>
+      <ul class="fragmentation__nodes">
+        @for (fragment of fragments; track fragment.label) {
+          <li class="fragmentation__node" [style.--x.%]="fragment.x" [style.--y.%]="fragment.y">
+            <span class="fragmentation__label">{{ fragment.label }}</span>
+            <span class="fragmentation__detail">{{ fragment.detail }}</span>
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>

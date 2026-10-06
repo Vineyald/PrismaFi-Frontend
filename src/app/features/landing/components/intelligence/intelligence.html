@@ -1,0 +1,55 @@
+<section class="intelligence" id="intelligence" aria-labelledby="intelligence-title">
+  <div class="intelligence__inner container">
+    <div class="intelligence__copy" appReveal>
+      <p class="intelligence__eyebrow">Financial intelligence</p>
+      <h2 class="intelligence__title" id="intelligence-title">Your data should explain itself.</h2>
+      <p class="intelligence__text">
+        Recording transactions is useful. Understanding what they mean is better.
+      </p>
+      <p class="intelligence__text">
+        PrismaFi is designed to evolve from financial organization into financial intelligence —
+        identifying patterns, highlighting changes and helping you understand your behavior over
+        time.
+      </p>
+
+      <dl class="intelligence__signals">
+        @for (signal of signals; track signal.name) {
+          <div class="intelligence__signal">
+            <dt class="intelligence__signal-name">{{ signal.name }}</dt>
+            <dd class="intelligence__signal-text">{{ signal.text }}</dd>
+          </div>
+        }
+      </dl>
+    </div>
+
+    <aside class="insight" aria-labelledby="insight-title" appReveal>
+      <header class="insight__header">
+        <h3 class="insight__title" id="insight-title">Monthly insight</h3>
+        <span class="insight__sample">Example · sample data</span>
+      </header>
+
+      <p class="insight__message">
+        Your recurring expenses increased 12% compared with the previous three-month average.
+      </p>
+
+      <table class="insight__table">
+        <caption class="insight__caption">
+          Recurring expenses
+        </caption>
+        <tbody>
+          @for (entry of recurring; track entry.month; let last = $last) {
+            <tr class="insight__row" [class.insight__row--current]="last">
+              <th class="insight__month" scope="row">{{ entry.month }}</th>
+              <td class="insight__bar-cell" aria-hidden="true">
+                <span class="insight__bar" [style.--share]="entry.share"></span>
+              </td>
+              <td class="insight__amount">{{ entry.amount }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <p class="insight__trend"><span class="insight__trend-value">+18,5%</span> since June</p>
+    </aside>
+  </div>
+</section>

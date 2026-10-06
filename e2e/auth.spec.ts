@@ -15,18 +15,14 @@ const invalidCredentials = {
 
 const PASSWORD = 'correct horse battery';
 
-// The backend is stubbed (as in app.spec.ts) so the suite runs without the API stack.
+// The auth API is stubbed per test so the suite runs without the backend.
 // Fixtures use the generated OpenAPI types, so they stop compiling when the contract changes.
-test.beforeEach(async ({ page }) => {
-  await page.route('**/api/health', (route) => route.abort());
-});
-
 async function fillLogin(page: Page, email: string, password: string) {
   await page.getByLabel('Email').fill(email);
   await page.getByLabel('Password').fill(password);
 }
 
-test('registers, signs in and lands on home', async ({ page }) => {
+test('registers, signs in and lands on the landing page', async ({ page }) => {
   const bodies: unknown[] = [];
   await page.route('**/api/v1/auth/register', async (route) => {
     bodies.push(route.request().postDataJSON());
@@ -38,7 +34,8 @@ test('registers, signs in and lands on home', async ({ page }) => {
   });
 
   await page.goto('/');
-  await page.getByRole('link', { name: 'Sign in' }).click();
+  const header = page.getByRole('banner');
+  await header.getByRole('link', { name: 'Sign in' }).click();
   await page.getByRole('link', { name: 'Create an account' }).click();
   await expect(page).toHaveTitle('Create account · PrismaFi');
 
@@ -55,8 +52,8 @@ test('registers, signs in and lands on home', async ({ page }) => {
   await page.getByRole('button', { name: 'Sign in' }).click();
 
   await expect(page).toHaveURL('/');
-  await expect(page.getByRole('heading', { name: 'PrismaFi' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Sign in' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(header.getByRole('link', { name: 'Sign in' })).toHaveCount(0);
   expect(bodies).toEqual([
     { name: 'Ana Souza', email: 'ana@example.com', password: PASSWORD },
     { email: 'ana@example.com', password: PASSWORD },

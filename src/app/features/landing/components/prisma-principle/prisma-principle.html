@@ -1,0 +1,51 @@
+<section class="principle" aria-labelledby="principle-title">
+  <div class="principle__inner container">
+    <div class="principle__copy" appReveal>
+      <p class="principle__eyebrow">The Prisma principle</p>
+      <h2 class="principle__title" id="principle-title">Complexity in. Clarity out.</h2>
+      <p class="principle__text">
+        A prism reveals the structure hidden inside light. PrismaFi follows the same principle with
+        financial information: organize what is scattered, surface what matters and make the bigger
+        picture easier to understand.
+      </p>
+    </div>
+
+    <div class="principle__flow" appReveal>
+      <svg
+        class="principle__lines"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      >
+        <!-- Four inputs converge on the prism; four outputs leave it in order. -->
+        <path class="principle__line principle__line--in" d="M18 12.5 C34 12.5 38 50 46 50" />
+        <path class="principle__line principle__line--in" d="M18 37.5 C34 37.5 38 50 46 50" />
+        <path class="principle__line principle__line--in" d="M18 62.5 C34 62.5 38 50 46 50" />
+        <path class="principle__line principle__line--in" d="M18 87.5 C34 87.5 38 50 46 50" />
+        <path class="principle__line principle__line--violet" d="M54 50 C62 50 66 12.5 82 12.5" />
+        <path class="principle__line principle__line--violet" d="M54 50 C62 50 66 37.5 82 37.5" />
+        <path class="principle__line principle__line--cyan" d="M54 50 C62 50 66 62.5 82 62.5" />
+        <path class="principle__line principle__line--cyan" d="M54 50 C62 50 66 87.5 82 87.5" />
+      </svg>
+
+      <ul class="principle__list principle__list--in" aria-label="What goes in">
+        @for (input of inputs; track input) {
+          <li class="principle__item">{{ input }}</li>
+        }
+      </ul>
+
+      <div class="principle__prism">
+        <svg class="principle__prism-shape" viewBox="0 0 80 72" aria-hidden="true">
+          <path d="M40 4 L76 68 H4 Z" />
+        </svg>
+        <span class="principle__prism-label">PrismaFi</span>
+      </div>
+
+      <ul class="principle__list principle__list--out" aria-label="What comes out">
+        @for (output of outputs; track output) {
+          <li class="principle__item principle__item--out">{{ output }}</li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>

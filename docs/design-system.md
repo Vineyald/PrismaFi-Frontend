@@ -185,6 +185,25 @@ Estados interativos: default, hover, active, foco visível, disabled, loading e 
 
 **Movimento reduzido**: com `prefers-reduced-motion: reduce`, transições e animações CSS terminam na hora (`base/_accessibility.scss`) e cenas 3D renderizam um quadro estático.
 
+**Entrada ao rolar**: a diretiva `appReveal` (`features/landing/reveal.ts`) aplica a classe global `.reveal` (opacidade 0 e 20px abaixo) e, na primeira vez que o elemento entra na viewport, `.reveal--visible`, com `$duration-slower` e `$ease-enter`. Um `IntersectionObserver` por elemento, desligado depois de disparar; nada de listener de scroll. Use em blocos (cabeçalho de seção, um visual), não em cada parágrafo. Com movimento reduzido, só a opacidade muda.
+
+## Padrões de página (landing)
+
+Cada seção é um componente com bloco BEM próprio (`hero`, `fragmentation`, `principle`, `product-preview`, `capability`, `intelligence`, `insight`, `steps`, `security`, `roadmap`, `final-cta`) e puxa a aparência comum dos mixins de `features/landing/_landing.scss`:
+
+- `section`: espaçamento vertical `$space-section`.
+- `eyebrow`: traço violeta curto + rótulo em maiúsculas, apagado. O acento fica no detalhe.
+- `title` (h2, até ~20 caracteres por linha, `text-wrap: balance`) e `lead` (body-lg secundário).
+- `sample-label`: rótulo discreto "sample data" em visualizações com dados de exemplo.
+
+Regras de composição:
+
+- Ritmo variado: texto | visual, visual | texto, painel centralizado, linha contínua de passos. Nunca uma sequência de grades de cards iguais.
+- Fundos alternam entre `$color-background-primary` e `secondary`, com bordas sutis entre seções; no máximo uma luz (`backdrop-glow`) por seção.
+- Visualizações de produto usam os mesmos tokens e componentes do app e trazem "sample data" visível: são demonstração, não dados do usuário.
+- Funcionalidades futuras são descritas como futuras ("being built to", "designed to"); o roadmap mostra status em texto ("In progress", "Next", "Planned").
+- Legendas de gráficos usam o bloco global `.legend` (`styles/utilities/_legend.scss`): o nome da série é sempre texto, a cor (via `--legend-swatch`) só apoia.
+
 ## Responsividade
 
 Mobile-first, de **320px a 2560px**. `@include breakpoint(md)` ou `breakpoint($bp-md)`:
@@ -248,7 +267,7 @@ A ideia guia: **infraestrutura financeira visualizada como geometria de precisã
 - Sem WebGL, se o chunk do `three` não carregar ou se a cena lançar erro, fica vazio com `data-state="unsupported"` (o contexto WebGL é liberado): dê ao host um fundo CSS de fallback (ex.: `backdrop-glow`).
 - O canvas é decorativo (`aria-hidden`); o significado fica no conteúdo ao redor.
 
-A cena é uma função que recebe o módulo `three` e devolve `{ scene, camera, update?, dispose? }`:
+A cena é uma função que recebe o módulo `three` e devolve `{ scene, camera, update?, resize?, dispose? }` (`resize(width, height)` reenquadra a composição quando o canvas muda de proporção):
 
 ```ts
 const heroPrism: ThreeSceneFactory = (three) => {
@@ -260,6 +279,16 @@ const heroPrism: ThreeSceneFactory = (three) => {
 ```
 
 `PRISM_PALETTE` (`shared/three/prism-palette.ts`) espelha os tokens de cor em números para o WebGL. O host define o tamanho (`height`, `aspect-ratio` ou posição absoluta atrás do conteúdo, com `z-index: $z-background`).
+
+### Cena do hero (`features/landing/three/hero-prism.scene.ts`)
+
+Sinais dispersos entram pela esquerda, convergem num prisma de vidro escuro e saem pela direita como quatro raios calmos e igualmente espaçados (dois violeta, dois ciano), com pacotes de dados em ritmo regular. Os sinais são invisíveis longe do prisma e ganham nitidez ao se aproximar, para não competir com o título.
+
+- Desktop (canvas ≥ 1024px, atrás do texto): o prisma fica na metade direita; telas mais quadradas afastam a câmera. Abaixo disso, o canvas fica sob o texto e o prisma centralizado.
+- Telas < 768px usam a versão leve: menos sinais e material sem transmissão (sem a passada extra de refração).
+- Ponteiro (só mouse/trackpad): leve inclinação do prisma e deslocamento mínimo da câmera. Toque não interage.
+- Fallback: um SVG estático com a mesma história fica visível até a cena desenhar e permanece se não houver WebGL.
+- Com movimento reduzido: um quadro estático, sem resposta ao ponteiro.
 
 ## Acessibilidade
 

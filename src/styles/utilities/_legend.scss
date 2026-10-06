@@ -1,0 +1,37 @@
+@use '../abstracts' as *;
+
+// Chart legends. Each item names its series in text; the swatch only supports it.
+//   <ul class="legend">
+//     <li class="legend__item" style="--legend-swatch: …">Income</li>
+//     <li class="legend__item legend__item--line">Expenses</li>
+//   </ul>
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2 $space-5;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    @include text-style(caption);
+    color: $color-text-muted;
+
+    &::before {
+      content: '';
+      width: 0.625rem;
+      height: 0.625rem;
+      border-radius: $radius-xs;
+      background: var(--legend-swatch, #{$color-border-strong});
+    }
+
+    // Line series: a short stroke instead of a square.
+    &--line::before {
+      width: 0.875rem;
+      height: 2px;
+      border-radius: 0;
+    }
+  }
+}

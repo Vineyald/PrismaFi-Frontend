@@ -1,74 +1,7 @@
-@use 'abstracts' as *;
-
 :host {
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-}
-
-.app-header {
-  border-bottom: 1px solid $color-border-subtle;
-  background: $color-background-primary;
-
-  &__inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: $space-4;
-    min-height: 4rem;
-  }
-
-  &__brand {
-    display: inline-flex;
-    align-items: center;
-    gap: $space-3;
-    @include text-style(h4);
-    color: $color-text-primary;
-    text-decoration: none;
-  }
-
-  &__mark {
-    flex: none;
-    width: 1.75rem;
-    height: 1.5rem;
-    fill: none;
-    stroke-width: 1.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  &__mark-beam {
-    stroke: $color-text-muted;
-  }
-
-  &__mark-prism {
-    stroke: $color-text-primary;
-  }
-
-  &__mark-ray {
-    &--violet {
-      stroke: $color-accent-primary-text;
-    }
-
-    &--cyan {
-      stroke: $color-accent-secondary;
-    }
-  }
-
-  &__nav {
-    display: flex;
-    align-items: center;
-    gap: $space-2;
-  }
-
-  // Phones keep only "Sign in"; the sign-in page links to registration.
-  &__cta {
-    display: none;
-
-    @include breakpoint($bp-sm) {
-      display: inline-flex;
-    }
-  }
 }
 
 // Routed pages fill the rest of the viewport with `:host { flex: 1; }`.

@@ -1,0 +1,128 @@
+@use 'abstracts' as *;
+
+:host {
+  position: sticky;
+  top: 0;
+  z-index: $z-header;
+  display: block;
+  border-bottom: 1px solid transparent;
+  @include transition(background-color, border-color);
+}
+
+// Integrated into the page at the top; a solid, bordered bar once content scrolls under it.
+:host(.site-header--scrolled),
+:host(.site-header--open) {
+  border-bottom-color: $color-border-subtle;
+  background: color-mix(in srgb, $color-background-primary 88%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.site-header {
+  &__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 4rem;
+  }
+
+  &__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-3;
+    min-height: $control-height;
+    @include text-style(h4);
+    color: $color-text-primary;
+    text-decoration: none;
+  }
+
+  &__toggle {
+    display: grid;
+    place-items: center;
+    width: $control-height;
+    height: $control-height;
+    margin-right: -$space-2;
+    border: 0;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: $color-text-primary;
+    cursor: pointer;
+
+    &:hover {
+      background: $color-surface-secondary;
+    }
+  }
+
+  &__toggle-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+  }
+
+  // Mobile: a full-width panel under the bar, only while open.
+  &__menu {
+    display: none;
+    flex-basis: 100%;
+    padding: $space-2 0 $space-6;
+  }
+
+  &__links {
+    display: grid;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    min-height: $control-height;
+    @include text-style(label);
+    color: $color-text-secondary;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-text-primary;
+    }
+  }
+
+  &__actions {
+    display: grid;
+    gap: $space-2;
+    margin-top: $space-4;
+  }
+}
+
+:host(.site-header--open) .site-header__menu {
+  display: block;
+}
+
+// Desktop: everything inline, no toggle.
+@include breakpoint($bp-lg) {
+  .site-header__toggle {
+    display: none;
+  }
+
+  .site-header__menu,
+  :host(.site-header--open) .site-header__menu {
+    display: flex;
+    flex: 1;
+    flex-basis: auto;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 0 $space-12;
+  }
+
+  .site-header__links {
+    display: flex;
+    gap: $space-8;
+  }
+
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    margin-top: 0;
+  }
+}

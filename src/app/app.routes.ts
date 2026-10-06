@@ -1,7 +1,11 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', loadComponent: () => import('./features/home/home').then((m) => m.Home) },
+  {
+    path: '',
+    title: 'PrismaFi — See your money clearly',
+    loadComponent: () => import('./features/landing/landing').then((m) => m.Landing),
+  },
   {
     path: 'login',
     title: 'Sign in · PrismaFi',

@@ -1,0 +1,95 @@
+<section class="capabilities" aria-labelledby="capabilities-title">
+  <div class="capabilities__inner container">
+    <div class="capabilities__copy" appReveal>
+      <p class="capabilities__eyebrow">Built around your finances</p>
+      <h2 class="capabilities__title" id="capabilities-title">
+        Less tracking. More understanding.
+      </h2>
+    </div>
+
+    @for (capability of capabilities; track capability.visual; let odd = $odd) {
+      <article class="capability" [class.capability--reverse]="odd" appReveal>
+        <div class="capability__content">
+          <p class="capability__name">{{ capability.name }}</p>
+          <h3 class="capability__title">{{ capability.title }}</h3>
+          <p class="capability__text">{{ capability.text }}</p>
+        </div>
+
+        <div class="capability__visual" aria-hidden="true">
+          @switch (capability.visual) {
+            @case ('overview') {
+              <svg class="capability__svg" viewBox="0 0 320 160">
+                <path class="capability__stroke" d="M8 30 C80 30 110 80 160 80" />
+                <path class="capability__stroke" d="M8 62 C80 62 110 80 160 80" />
+                <path class="capability__stroke" d="M8 98 C80 98 110 80 160 80" />
+                <path class="capability__stroke" d="M8 130 C80 130 110 80 160 80" />
+                <path class="capability__stroke capability__stroke--accent" d="M160 80 H312" />
+                <path class="capability__tick" d="M200 74v12M240 74v12M280 74v12" />
+                <circle class="capability__node" cx="160" cy="80" r="4" />
+              </svg>
+            }
+            @case ('cash-flow') {
+              <svg class="capability__svg" viewBox="0 0 320 160">
+                <path class="capability__grid-line" d="M8 40 H312 M8 80 H312 M8 120 H312" />
+                <path
+                  class="capability__area"
+                  d="M8 52 C70 44 110 58 160 48 S260 36 312 40 L312 104 C260 98 220 112 160 100 S70 110 8 96 Z"
+                />
+                <path
+                  class="capability__stroke capability__stroke--accent"
+                  d="M8 52 C70 44 110 58 160 48 S260 36 312 40"
+                />
+                <path class="capability__stroke" d="M8 96 C70 110 110 96 160 100 S260 98 312 104" />
+              </svg>
+              <ul class="legend">
+                <li class="legend__item legend__item--line capability__series--in">Income</li>
+                <li class="legend__item legend__item--line">Expenses</li>
+                <li class="legend__item capability__series--left">What's left</li>
+              </ul>
+            }
+            @case ('transactions') {
+              <div class="capability__sorting">
+                <ul class="capability__raw">
+                  @for (raw of rawTransactions; track raw) {
+                    <li class="capability__raw-item">{{ raw }}</li>
+                  }
+                </ul>
+                <svg class="capability__arrow" viewBox="0 0 40 16">
+                  <path d="M2 8 H36 M30 3 L36 8 L30 13" />
+                </svg>
+                <ul class="capability__categories">
+                  @for (category of categories; track category.name) {
+                    <li class="capability__category">
+                      <span>{{ category.name }}</span>
+                      <span class="capability__category-count">{{ category.count }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+            @case ('goals') {
+              <div class="capability__goal">
+                <svg class="capability__ring" viewBox="0 0 120 120">
+                  @for (tick of goalTicks; track $index) {
+                    <line
+                      class="capability__ring-tick"
+                      [class.capability__ring-tick--done]="tick.done"
+                      [attr.x1]="tick.x1"
+                      [attr.y1]="tick.y1"
+                      [attr.x2]="tick.x2"
+                      [attr.y2]="tick.y2"
+                    />
+                  }
+                </svg>
+                <div class="capability__goal-text">
+                  <span class="capability__goal-value">65%</span>
+                  <span class="capability__goal-detail">R$ 6.500 of R$ 10.000</span>
+                </div>
+              </div>
+            }
+          }
+        </div>
+      </article>
+    }
+  </div>
+</section>

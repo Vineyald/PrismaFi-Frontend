@@ -1,0 +1,69 @@
+<section class="product-preview" id="product" aria-labelledby="product-title">
+  <div class="product-preview__inner container container--wide">
+    <div class="product-preview__copy" appReveal>
+      <p class="product-preview__eyebrow">One financial view</p>
+      <h2 class="product-preview__title" id="product-title">
+        Everything important, without the noise.
+      </h2>
+    </div>
+
+    <figure class="product-preview__window" appReveal>
+      <div class="product-preview__bar">
+        <span class="product-preview__window-title">Overview · June</span>
+        <span class="product-preview__sample">Product preview · sample data</span>
+      </div>
+
+      <div class="product-preview__body">
+        <ul class="product-preview__sidebar" aria-hidden="true">
+          @for (item of navigation; track item; let first = $first) {
+            <li class="product-preview__nav-item" [class.product-preview__nav-item--active]="first">
+              {{ item }}
+            </li>
+          }
+        </ul>
+
+        <div class="product-preview__main">
+          <dl class="product-preview__metrics">
+            @for (metric of metrics; track metric.label) {
+              <div class="product-preview__metric">
+                <dt class="product-preview__metric-label">{{ metric.label }}</dt>
+                <dd class="product-preview__metric-value">{{ metric.value }}</dd>
+                @if (metric.delta) {
+                  <dd class="metric__delta metric__delta--positive">{{ metric.delta }}</dd>
+                }
+              </div>
+            }
+          </dl>
+
+          <div class="product-preview__panels">
+            <section class="product-preview__panel" aria-labelledby="preview-cash-flow">
+              <app-cash-flow-chart />
+            </section>
+
+            <section class="product-preview__panel" aria-labelledby="preview-activity">
+              <h3 class="product-preview__panel-title" id="preview-activity">Recent activity</h3>
+              <ul class="product-preview__activity">
+                @for (entry of activity; track entry.name) {
+                  <li class="product-preview__entry">
+                    <span class="product-preview__entry-name">{{ entry.name }}</span>
+                    <span class="product-preview__entry-category">{{ entry.category }}</span>
+                    <span
+                      class="product-preview__entry-amount"
+                      [class.product-preview__entry-amount--incoming]="entry.incoming"
+                    >
+                      {{ entry.amount }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <figcaption class="visually-hidden">
+        Preview of the PrismaFi overview with sample data, not real account information.
+      </figcaption>
+    </figure>
+  </div>
+</section>

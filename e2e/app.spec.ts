@@ -1,41 +1,107 @@
-import { expect, test } from '@playwright/test';
-import type { components } from '../src/app/core/api/schema';
+import { expect, test, type Page } from '@playwright/test';
 
-const healthy = {
-  status: 'healthy',
-  service: 'prismafi-backend',
-  checks: { database: 'ok', redis: 'ok' },
-} satisfies components['schemas']['HealthResponse'];
+const noOverflow = (page: Page) =>
+  page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
 
-// The backend is stubbed so the E2E suite runs without the API stack.
-test.describe('app shell', () => {
-  test('lazy-loads the home route and shows API status', async ({ page }) => {
-    await page.route('**/api/health', (route) => route.fulfill({ json: healthy }));
+test.describe('landing page', () => {
+  test('is the public entry point, with one h1 and every section', async ({ page }) => {
+    await page.goto('/');
+
+    await expect(page).toHaveTitle('PrismaFi — See your money clearly');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('See your money clearly.');
+    await expect(page.locator('h1')).toHaveCount(1);
+    for (const name of [
+      "Your financial life shouldn't feel fragmented.",
+      'Complexity in. Clarity out.',
+      'Everything important, without the noise.',
+      'Less tracking. More understanding.',
+      'Your data should explain itself.',
+      'A clearer financial routine in three steps.',
+      'Financial clarity starts with trust.',
+      'The foundation first. Intelligence next.',
+      'Bring your finances into focus.',
+    ]) {
+      await expect(page.getByRole('heading', { level: 2, name })).toBeAttached();
+    }
+  });
+
+  test('hero calls to action reach registration and the walkthrough', async ({ page }) => {
+    await page.goto('/');
+
+    await page.getByRole('link', { name: 'See how it works' }).click();
+    await expect(page).toHaveURL('/#how-it-works');
+    await expect(
+      page.getByRole('heading', { name: 'A clearer financial routine' }),
+    ).toBeInViewport();
+
+    await page.getByRole('link', { name: 'Create your account' }).first().click();
+    await expect(page).toHaveURL('/register');
+  });
+
+  test('header navigation scrolls to sections and reaches sign in', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+    const nav = page.getByRole('navigation', { name: 'Main' });
+
+    await nav.getByRole('link', { name: 'Roadmap' }).click();
+    await expect(page).toHaveURL('/#roadmap');
+    await expect(page.getByRole('heading', { name: 'The foundation first.' })).toBeInViewport();
+
+    await page.getByRole('banner').getByRole('link', { name: 'Sign in' }).click();
+    await expect(page).toHaveURL('/login');
+    // Section links work from other pages too.
+    await nav.getByRole('link', { name: 'Security' }).click();
+    await expect(page).toHaveURL('/#security');
+    await expect(page.getByRole('heading', { name: 'Financial clarity starts' })).toBeInViewport();
+  });
+
+  test('mobile menu opens, navigates and closes with Escape', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/');
+    const toggle = page.getByRole('button', { name: 'Menu' });
+    const nav = page.getByRole('navigation', { name: 'Main' });
+
+    await expect(nav).toBeHidden();
+    await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await nav.getByRole('link', { name: 'Intelligence' }).click();
+    await expect(page).toHaveURL('/#intelligence');
+    await expect(nav).toBeHidden();
+
+    await toggle.click();
+    await page.keyboard.press('Escape');
+    await expect(nav).toBeHidden();
+    await expect(toggle).toBeFocused();
+  });
+
+  test('stays within the viewport from 320px to 2560px', async ({ page }) => {
+    for (const width of [320, 360, 390, 768, 1024, 1440, 2560]) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/');
+      expect(await noOverflow(page), `${width}px`).toBe(true);
+    }
+  });
+
+  test('keeps its content and a fallback visual without WebGL', async ({ page }) => {
+    await page.addInitScript(() => {
+      const getContext = HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string) {
+        return /webgl/.test(type) ? null : getContext.call(this, type as '2d');
+      } as typeof getContext;
+    });
 
     await page.goto('/');
 
-    await expect(page.getByRole('heading', { name: 'PrismaFi' })).toBeVisible();
-    await expect(page.getByRole('status')).toHaveText(/API online/);
+    await expect(page.locator('.three-canvas')).toHaveAttribute('data-state', 'unsupported');
+    await expect(page.locator('.hero__fallback')).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Create your account' }).first()).toBeVisible();
   });
 
-  test('redirects unknown routes to home', async ({ page }) => {
-    await page.route('**/api/health', (route) => route.fulfill({ status: 503, json: {} }));
-
+  test('redirects unknown routes to the landing page', async ({ page }) => {
     await page.goto('/does-not-exist');
 
     await expect(page).toHaveURL('/');
-    await expect(page.getByRole('status')).toHaveText(/API offline/);
-  });
-
-  test('stays within the viewport on mobile', async ({ page }) => {
-    await page.route('**/api/health', (route) => route.abort());
-    await page.setViewportSize({ width: 320, height: 640 });
-
-    await page.goto('/');
-
-    const overflow = await page.evaluate(
-      () => document.documentElement.scrollWidth > window.innerWidth,
-    );
-    expect(overflow).toBe(false);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
   });
 });

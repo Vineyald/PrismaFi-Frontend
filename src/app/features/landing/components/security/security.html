@@ -1,0 +1,38 @@
+<section class="security" id="security" aria-labelledby="security-title">
+  <div class="security__inner container">
+    <div class="security__copy" appReveal>
+      <p class="security__eyebrow">Built with control in mind</p>
+      <h2 class="security__title" id="security-title">Financial clarity starts with trust.</h2>
+      <p class="security__text">
+        PrismaFi is being built with secure identity, controlled sessions and careful handling of
+        financial information as foundational requirements — not features added later.
+      </p>
+
+      <ul class="security__principles">
+        @for (principle of principles; track principle.name) {
+          <li class="security__principle">
+            <h3 class="security__principle-name">{{ principle.name }}</h3>
+            <p class="security__principle-text">{{ principle.text }}</p>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <!-- Nested boundaries around your data: the same four principles, as a diagram. -->
+    <div class="security__diagram" aria-hidden="true" appReveal>
+      <div class="security__layer security__layer--boundary">
+        <span class="security__layer-label">Clear boundaries</span>
+        <div class="security__layer security__layer--privacy">
+          <span class="security__layer-label">Privacy by design</span>
+          <div class="security__layer security__layer--session">
+            <span class="security__layer-label">Session control</span>
+            <div class="security__layer security__layer--identity">
+              <span class="security__layer-label">Secure authentication</span>
+              <div class="security__core">Your data</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

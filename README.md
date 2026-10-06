@@ -4,7 +4,7 @@ Aplicação web do PrismaFi, construída com Angular e TypeScript.
 
 O PrismaFi é um SaaS financeiro que dá ao usuário uma visão centralizada da sua vida financeira. Ele vai reunir, em uma aplicação web autenticada, instituições conectadas via Open Finance, contas bancárias, saldos, transações e contas a pagar, além da iniciação de pagamentos. A operação financeira é executada por infraestrutura regulada; o PrismaFi orquestra a experiência e nunca tem a custódia do dinheiro do usuário.
 
-Hoje este repositório contém a fundação (o shell da aplicação, a base do design system, uma tela inicial lazy que mostra o status do backend, a estrutura de testes e o CI) e o começo da Fase 1: telas de cadastro e login, com os primeiros componentes de UI reutilizáveis (veja o [Roadmap até o MVP](#roadmap-até-o-mvp)).
+Hoje este repositório contém a fundação (shell, design system com a identidade visual definitiva, estrutura de testes e CI), a landing page pública com a cena 3D do prisma e o começo da Fase 1: telas de cadastro e login (veja o [Roadmap até o MVP](#roadmap-até-o-mvp)).
 
 O backend fica em um repositório separado (`PrismaFi-Backend`). Os dois se integram **somente** via REST e pelo schema OpenAPI do backend; este repositório nunca importa arquivos do backend.
 
@@ -49,8 +49,15 @@ PrismaFi-Frontend/
 │   │   │   │   └── schema.d.ts      # GERADO a partir do OpenAPI do backend (npm run api:types)
 │   │   │   └── auth/
 │   │   │       └── auth.ts          # Chamadas de login/cadastro, token em memória, toAuthFailure
+│   │   ├── layout/                  # Layout público: site-header (sticky, menu mobile), site-footer, brand-mark
 │   │   ├── features/
-│   │   │   ├── home/                # Tela inicial (rota lazy)
+│   │   │   ├── landing/             # Landing page (rota lazy /): uma seção por componente
+│   │   │   │   ├── landing.ts       # Página: compõe as seções na ordem da narrativa
+│   │   │   │   ├── components/      # hero, fragmentation, prisma-principle, product-preview, capabilities,
+│   │   │   │   │                    # intelligence, how-it-works, security, roadmap, final-cta
+│   │   │   │   ├── three/           # hero-prism.scene.ts (cena 3D do hero)
+│   │   │   │   ├── reveal.ts        # Diretiva appReveal (entrada ao rolar, uma vez)
+│   │   │   │   └── _landing.scss    # Mixins de seção (eyebrow, título, lead)
 │   │   │   └── auth/                # Telas de autenticação (rotas lazy /login e /register)
 │   │   │       ├── login/ , register/
 │   │   │       ├── auth-form.ts     # Validadores, mensagens de falha e foco, comuns às duas telas
@@ -59,20 +66,20 @@ PrismaFi-Frontend/
 │   │   ├── shared/
 │   │   │   ├── ui/                  # button, form-field, inline-alert
 │   │   │   └── three/               # <app-three-canvas> (cenas 3D lazy) e PRISM_PALETTE
-│   │   ├── app.ts / app.scss        # Shell da aplicação: header + <router-outlet>
+│   │   ├── app.ts / app.scss        # Shell: site-header + <router-outlet> + site-footer
 │   │   ├── app.routes.ts            # Rotas lazy
 │   │   └── app.config.ts            # Providers: router (com input binding), HttpClient (fetch)
 │   ├── styles/
 │   │   ├── abstracts/               # Tokens e mixins (não emitem CSS): cores, tipografia, espaçamento,
 │   │   │                            # breakpoints, raios, sombras, movimento, z-index, superfícies, fundos
 │   │   ├── base/                    # Tema (custom properties), reset, tipografia base, foco e movimento reduzido
-│   │   ├── utilities/               # Classes globais: .container, .metric, .numeric
+│   │   ├── utilities/               # Classes globais: .container, .metric, .numeric, .legend, .reveal
 │   │   └── main.scss                # Entrada global (única folha que emite CSS global)
 │   ├── index.html
 │   └── main.ts
 ├── .github/workflows/ci.yml         # CI: lint, format:check, test, build, e2e
 ├── e2e/
-│   ├── app.spec.ts                  # Testes Playwright: shell e tela inicial
+│   ├── app.spec.ts                  # Testes Playwright: landing page e navegação
 │   └── auth.spec.ts                 # Testes Playwright: cadastro e login
 ├── public/favicon.svg
 ├── proxy.conf.json                  # Proxy de desenvolvimento: /api -> http://localhost:8000
@@ -86,15 +93,16 @@ PrismaFi-Frontend/
 | `core/`            | Infraestrutura não visual, usada pela aplicação inteira. Hoje: o contrato gerado da API e `core/auth/` (chamadas de autenticação e token em memória); o interceptor, os guards e o estado de sessão completo entram ali nas próximas entregas da Fase 1. `features/auth/` contém só as telas e usa `core/auth/`; `core/` nunca importa features. |
 | `features/<nome>/` | Uma pasta por área do produto, cada uma com sua rota lazy, componentes, estilos e specs. Uma feature nunca importa detalhes internos de outra.                                                                                                                                                                                                   |
 | `styles/`          | Camada global do design system.                                                                                                                                                                                                                                                                                                                  |
-| `app.ts`           | O shell. Só vai para uma pasta `layout/` própria quando houver mais de um layout (ex.: público vs. autenticado), o que está previsto para a Fase 1.                                                                                                                                                                                              |
+| `layout/`          | Layout público (header, footer), usado pela landing page e pelas telas de autenticação. O layout autenticado entra aqui quando existir a área logada.                                                                                                                                                                                            |
+| `app.ts`           | O shell: só monta o layout em volta do `<router-outlet>`.                                                                                                                                                                                                                                                                                        |
 
 `shared/ui/` contém os componentes de UI reutilizáveis, sem dependência de `core/` ou de features:
 
-- `button[app-button]` / `a[app-button]`: estiliza um `<button>` ou `<a>` nativo (semântica, `type`, `href` e `disabled` continuam com quem usa), com variantes `primary`, `secondary` e `ghost` e tamanho `small`. Com `[loading]`, mostra um spinner, fica `aria-disabled` (sem perder o foco) e cancela cliques, inclusive o clique implícito do Enter num campo, impedindo envio duplicado.
+- `button[app-button]` / `a[app-button]`: estiliza um `<button>` ou `<a>` nativo (semântica, `type`, `href` e `disabled` continuam com quem usa), com variantes `primary`, `secondary` e `ghost` e tamanho `small`. Com `[loading]` (só em `<button>`), mostra um spinner, fica `aria-disabled` (sem perder o foco) e bloqueia o envio do formulário, inclusive pelo Enter num campo; handlers `(click)` próprios precisam se proteger.
 - `app-form-field`: label + input ligado a um `FormControl<string>` tipado, com indicação de obrigatório, dica e mensagem de erro (ligada por `aria-describedby`) depois que o campo é tocado. Erros sem mensagem padrão levam o texto no próprio valor (`{ mismatch: '...' }`, `{ server: '...' }`).
 - `app-inline-alert`: feedback contextual. `error` usa `role="alert"`; `warning` e `info` usam `role="status"`. Cada variante tem ícone de formato próprio e um rótulo oculto, para não depender só da cor.
 
-`layout/` **ainda não existe, de propósito**: nasce com o layout autenticado. Outras pastas de `shared/` (ex.: `shared/format/` para valores em BRL) nascem com o primeiro uso.
+Outras pastas de `shared/` (ex.: `shared/format/` para valores em BRL) nascem com o primeiro uso.
 
 ## Padrões Angular
 
@@ -153,7 +161,7 @@ npm run lint
 npm run format:check
 ```
 
-Sem o backend rodando, a aplicação funciona normalmente e a tela inicial mostra **API offline**.
+Sem o backend rodando, a landing page funciona normalmente; só cadastro e login precisam da API.
 
 ## Integração com o backend
 
@@ -194,11 +202,12 @@ Toda requisição do navegador para `http://localhost:4200/api/...` é encaminha
 ## Testes
 
 - **Vitest** (`npm test`): testes de componente com `TestBed` e `HttpTestingController`. Cobrem:
-  - a lógica de status da tela inicial (online, offline com 503, Retry focável enquanto recarrega);
+  - o layout público: links do header para cada seção e para as contas, menu mobile (`aria-expanded`, Escape fecha e devolve o foco, fecha ao navegar);
+  - a diretiva `appReveal` (revela uma vez e para de observar) e o ciclo de vida do `<app-three-canvas>` (animação, pausa fora da tela, movimento reduzido, liberação de recursos);
   - os componentes de `shared/ui/`: botão que bloqueia o envio enquanto carrega, campo com label associado, erros só depois de tocado e ligados por `aria-describedby`, alerta com `role` correto;
   - `core/auth`: login guarda o token só em memória, cadastro não autentica, e o mapeamento de erros HTTP (401, 422, rede, servidor);
   - login e cadastro: campos obrigatórios, e-mail inválido, confirmação de senha (revalidada quando a senha muda), foco no primeiro campo inválido, estado de carregamento, envio único, mensagem genérica para credenciais recusadas (inclusive 422 no login), falhas de rede e de servidor distintas, erros de campo vindos do servidor sem o texto bruto, e o aviso de sessão expirada.
-- **Playwright** (`npm run e2e`): testes em navegador real contra o `ng serve`, com a API simulada via `page.route` (as fixtures usam os tipos gerados do OpenAPI), então o backend não é necessário. Cobrem a rota lazy, o redirecionamento de rotas desconhecidas, a jornada cadastro → aviso → login → home, login recusado só com teclado, validação no cliente com foco, uma única requisição apesar de cliques e Enter repetidos, o aviso de sessão expirada e a ausência de rolagem horizontal em 320px. O Playwright usa o Google Chrome instalado (`channel: 'chrome'`), então não há download de navegador. Os runners do GitHub Actions já têm o Chrome instalado.
+- **Playwright** (`npm run e2e`): testes em navegador real contra o `ng serve`, com a API simulada via `page.route` (as fixtures usam os tipos gerados do OpenAPI), então o backend não é necessário. Cobrem a landing page (um único `h1`, todas as seções, CTAs para `/register` e para a seção "como funciona", navegação por âncoras no header, inclusive a partir de `/login`, menu mobile, ausência de rolagem horizontal de 320px a 2560px, conteúdo e visual de fallback sem WebGL), o redirecionamento de rotas desconhecidas, a jornada cadastro → aviso → login → landing, login recusado só com teclado, validação no cliente com foco, uma única requisição apesar de cliques e Enter repetidos, o aviso de sessão expirada e a ausência de rolagem horizontal em 320px. O Playwright usa o Google Chrome instalado (`channel: 'chrome'`), então não há download de navegador. Os runners do GitHub Actions já têm o Chrome instalado.
 
 ## Roadmap até o MVP
 
@@ -269,7 +278,7 @@ Com eventos de auditoria registrados para as ações financeiras críticas. O MV
 - [ ] Logout, logout de todos os dispositivos e tela de sessões ativas
 - [ ] Tela de perfil
 - [ ] Comportamento de sessão expirada: aviso claro e volta ao login preservando a rota de destino; o `returnUrl` só aceita caminhos internos (começa com `/`, nunca `//` ou `/\`), com fallback para o dashboard
-- [ ] Layouts separados: público (auth) e autenticado; nasce a pasta `layout/`
+- [ ] Layouts separados: público e autenticado. O layout público já existe em `layout/` (header, footer); falta o autenticado
 - [ ] Testes unitários do interceptor (token só em `/api/`, sem loop de refresh, retry único) e dos guards (incluindo `returnUrl` externo rejeitado); E2E de cadastro → login → reload → logout e de duas abas renovando ao mesmo tempo
 
 ### Fase 2 — Shell da aplicação e design system

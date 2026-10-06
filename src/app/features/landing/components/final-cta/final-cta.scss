@@ -1,0 +1,75 @@
+@use 'abstracts' as *;
+@use '../../landing' as *;
+
+:host {
+  @include section;
+  overflow: hidden;
+  border-top: 1px solid $color-border-subtle;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: $z-background;
+    @include backdrop-glow($position: 50% 100%, $size: 60% 60%);
+  }
+}
+
+.final-cta {
+  &__inner {
+    display: grid;
+    justify-items: center;
+    gap: $space-5;
+    text-align: center;
+  }
+
+  &__prism {
+    width: 10rem;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &__beam {
+    stroke: $color-text-muted;
+  }
+
+  &__shape {
+    stroke: $color-text-primary;
+    fill: $color-surface-primary;
+  }
+
+  &__ray {
+    &--violet {
+      stroke: $color-accent-primary-text;
+    }
+
+    &--cyan {
+      stroke: $color-accent-secondary;
+    }
+  }
+
+  &__title {
+    @include text-style(h1);
+    max-width: 16ch;
+    text-wrap: balance;
+  }
+
+  &__text {
+    @include lead;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: $space-3;
+    margin-top: $space-3;
+  }
+
+  &__note {
+    @include text-style(body-sm);
+    color: $color-text-muted;
+  }
+}

@@ -1,0 +1,85 @@
+@use 'abstracts' as *;
+
+:host {
+  display: block;
+  border-top: 1px solid $color-border-subtle;
+}
+
+.site-footer {
+  &__inner {
+    display: grid;
+    gap: $space-10;
+    padding-block: $space-12 $space-8;
+
+    @include breakpoint($bp-md) {
+      grid-template-columns: 1fr auto;
+    }
+  }
+
+  &__brand {
+    display: grid;
+    gap: $space-3;
+    align-content: start;
+  }
+
+  &__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-3;
+    @include text-style(h4);
+    color: $color-text-primary;
+    text-decoration: none;
+  }
+
+  &__tagline {
+    @include text-style(body-sm);
+    color: $color-text-muted;
+  }
+
+  &__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-12;
+  }
+
+  &__group {
+    display: grid;
+    gap: $space-3;
+    align-content: start;
+  }
+
+  &__heading {
+    @include text-style(caption);
+    text-transform: uppercase;
+    color: $color-text-muted;
+  }
+
+  &__links {
+    display: grid;
+    gap: $space-1;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__link {
+    display: inline-flex;
+    min-height: 2rem;
+    align-items: center;
+    @include text-style(body-sm);
+    color: $color-text-secondary;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-text-primary;
+    }
+  }
+
+  &__copyright {
+    @include text-style(caption);
+    color: $color-text-muted;
+
+    @include breakpoint($bp-md) {
+      grid-column: 1 / -1;
+    }
+  }
+}

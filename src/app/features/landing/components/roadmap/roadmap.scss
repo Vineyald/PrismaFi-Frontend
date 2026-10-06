@@ -1,0 +1,135 @@
+@use 'abstracts' as *;
+@use '../../landing' as *;
+
+:host {
+  @include section;
+}
+
+.roadmap {
+  &__inner {
+    display: grid;
+    gap: $space-12;
+  }
+
+  &__copy {
+    display: grid;
+    gap: $space-5;
+  }
+
+  &__eyebrow {
+    @include eyebrow;
+  }
+
+  &__title {
+    @include title;
+  }
+
+  &__text {
+    @include lead;
+  }
+
+  // The line shifts from neutral to violet to cyan as the system matures through the prism.
+  &__stages {
+    position: relative;
+    display: grid;
+    gap: $space-10;
+    padding: 0 0 0 $space-10;
+    list-style: none;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: $space-2;
+      bottom: $space-2;
+      left: 0.6875rem;
+      width: 1px;
+      background: linear-gradient(
+        to bottom,
+        $color-border-strong,
+        $color-accent-primary-text 60%,
+        $color-accent-secondary
+      );
+    }
+
+    @include breakpoint($bp-lg) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: $space-8;
+      padding: $space-10 0 0;
+
+      &::before {
+        top: 0.6875rem;
+        bottom: auto;
+        left: 0;
+        right: 0;
+        width: auto;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          $color-border-strong,
+          $color-accent-primary-text 60%,
+          $color-accent-secondary
+        );
+      }
+    }
+  }
+
+  &__stage {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: $space-3;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: $space-1;
+      left: calc(-1 * $space-10 + 0.375rem);
+      width: 0.75rem;
+      height: 0.75rem;
+      border: 1px solid $color-border-strong;
+      border-radius: $radius-full;
+      background: $color-background-primary;
+
+      @include breakpoint($bp-lg) {
+        top: calc(-1 * $space-10 + 0.375rem);
+        left: 0;
+      }
+    }
+
+    &--active::before {
+      border-color: $color-accent-primary-text;
+      background: $color-accent-primary-text;
+    }
+  }
+
+  // Status in words, not only by marker color.
+  &__status {
+    justify-self: start;
+    padding: 2px $space-2;
+    border: 1px solid $color-border-default;
+    border-radius: $radius-full;
+    @include text-style(caption);
+    color: $color-text-muted;
+  }
+
+  &__stage--active &__status {
+    border-color: $color-accent-primary-text;
+    color: $color-accent-primary-text;
+  }
+
+  &__name {
+    @include text-style(h4);
+  }
+
+  &__items {
+    display: grid;
+    gap: $space-2;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__item {
+    @include text-style(body-sm);
+    color: $color-text-secondary;
+  }
+}

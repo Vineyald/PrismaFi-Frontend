@@ -1,0 +1,21 @@
+@use '../abstracts' as *;
+
+// Entrance for the `appReveal` directive: opacity and a 20px rise, once.
+.reveal {
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition:
+    opacity $duration-slower $ease-enter,
+    transform $duration-slower $ease-enter;
+
+  &--visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transform: none;
+  }
+}

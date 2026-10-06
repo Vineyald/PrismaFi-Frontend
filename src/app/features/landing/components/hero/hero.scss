@@ -1,0 +1,138 @@
+@use 'abstracts' as *;
+@use '../../landing' as *;
+
+:host {
+  display: block;
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  overflow: hidden;
+  padding-top: $space-12;
+
+  @include breakpoint($bp-lg) {
+    align-items: center;
+    min-height: min(calc(100svh - 4rem), 56rem);
+    padding-block: $space-16 $space-24;
+  }
+
+  // Light falling from above, as on the rest of the identity.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: $z-background;
+    @include backdrop-glow($position: 65% 10%, $size: 70% 60%);
+  }
+
+  &__content {
+    display: grid;
+    justify-items: start;
+    gap: $space-5;
+  }
+
+  &__eyebrow {
+    @include eyebrow;
+  }
+
+  &__title {
+    @include text-style(display);
+    max-width: 11ch;
+    text-wrap: balance;
+  }
+
+  &__description {
+    @include lead;
+    max-width: 34rem;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-3;
+    margin-top: $space-3;
+  }
+
+  &__note {
+    @include text-style(body-sm);
+    color: $color-text-muted;
+  }
+
+  // Phones and tablets: the visual sits under the copy. Laptops up: behind it, prism right.
+  &__visual {
+    position: relative;
+    height: clamp(16rem, 70vw, 26rem);
+    margin-top: $space-8;
+
+    @include breakpoint($bp-lg) {
+      position: absolute;
+      inset: 0;
+      z-index: $z-background;
+      height: auto;
+      margin: 0;
+    }
+  }
+
+  &__canvas {
+    position: absolute;
+    inset: 0;
+  }
+
+  // Shown until the 3D scene draws, and kept when WebGL is unavailable.
+  &__fallback {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    @include transition(opacity);
+
+    @include breakpoint($bp-lg) {
+      inset: 10% 0 10% 40%;
+      width: 60%;
+      height: 80%;
+    }
+  }
+
+  &__visual:has(.three-canvas[data-state='running'], .three-canvas[data-state='static'])
+    &__fallback {
+    opacity: 0;
+  }
+
+  &__fallback-signals {
+    stroke: $color-border-strong;
+    stroke-dasharray: 2 6;
+  }
+
+  &__fallback-prism {
+    stroke: $color-text-primary;
+    stroke-linejoin: round;
+    fill: $color-surface-primary;
+  }
+
+  &__fallback-ray {
+    opacity: 0.7;
+
+    &--violet {
+      stroke: $color-accent-primary-text;
+    }
+
+    &--cyan {
+      stroke: $color-accent-secondary;
+    }
+  }
+
+  // The rays settle into the grid the next sections are built on.
+  &__grid {
+    position: absolute;
+    inset: auto 0 0;
+    z-index: $z-background;
+    height: 10rem;
+    @include backdrop-grid(3rem);
+    mask-image: linear-gradient(to bottom, transparent, black 70%);
+  }
+}

@@ -1,0 +1,36 @@
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__content container container--wide">
+    <p class="hero__eyebrow">Financial clarity, redefined</p>
+    <h1 class="hero__title" id="hero-title">See your money clearly.</h1>
+    <p class="hero__description">
+      PrismaFi brings your financial life into one clear view — helping you understand where your
+      money goes, what is changing, and what deserves your attention.
+    </p>
+    <div class="hero__actions">
+      <a app-button routerLink="/register">Create your account</a>
+      <a app-button variant="secondary" routerLink="/" fragment="how-it-works">See how it works</a>
+    </div>
+    <p class="hero__note">Start building a clearer view of your finances.</p>
+  </div>
+
+  <!-- Decorative: the same story as the copy, told with light. -->
+  <div class="hero__visual" aria-hidden="true">
+    <svg class="hero__fallback" viewBox="0 0 600 400">
+      <g class="hero__fallback-signals">
+        <path d="M20 90 L180 180" />
+        <path d="M60 300 L190 215" />
+        <path d="M10 200 L170 198" />
+        <path d="M90 140 L185 190" />
+        <path d="M70 250 L180 208" />
+      </g>
+      <path class="hero__fallback-prism" d="M255 95 L330 290 H180 Z" />
+      <path class="hero__fallback-ray hero__fallback-ray--violet" d="M290 185 L590 150" />
+      <path class="hero__fallback-ray hero__fallback-ray--violet" d="M292 198 L590 185" />
+      <path class="hero__fallback-ray hero__fallback-ray--cyan" d="M294 211 L590 220" />
+      <path class="hero__fallback-ray hero__fallback-ray--cyan" d="M296 224 L590 255" />
+    </svg>
+    <app-three-canvas class="hero__canvas" [scene]="scene" />
+  </div>
+
+  <div class="hero__grid" aria-hidden="true"></div>
+</section>

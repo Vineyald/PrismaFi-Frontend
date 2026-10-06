@@ -1,0 +1,48 @@
+// Section building blocks shared by the landing page components. Each section keeps its own BEM
+// block (`hero__eyebrow`, `roadmap__title`...) and pulls the common look from these mixins.
+@use 'abstracts' as *;
+
+@mixin section {
+  position: relative;
+  display: block;
+  padding-block: $space-section;
+}
+
+// Eyebrow: a short violet rule, then a muted uppercase label. The accent stays a detail.
+@mixin eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-3;
+  @include text-style(caption);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: $color-text-muted;
+
+  &::before {
+    content: '';
+    width: $space-6;
+    height: 1px;
+    background: $color-accent-primary-text;
+  }
+}
+
+@mixin title {
+  @include text-style(h2);
+  max-width: 20ch;
+  text-wrap: balance;
+}
+
+@mixin lead {
+  @include text-style(body-lg);
+  max-width: 38rem;
+  color: $color-text-secondary;
+  text-wrap: pretty;
+}
+
+// Sample-data label on product visualizations: honest, quiet.
+@mixin sample-label {
+  @include text-style(caption);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $color-text-muted;
+}

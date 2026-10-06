@@ -1,0 +1,212 @@
+@use 'abstracts' as *;
+@use '../../landing' as *;
+
+:host {
+  @include section;
+}
+
+.capabilities {
+  &__inner {
+    display: grid;
+    gap: $space-16;
+
+    @include breakpoint($bp-lg) {
+      gap: $space-24;
+    }
+  }
+
+  &__copy {
+    display: grid;
+    gap: $space-5;
+  }
+
+  &__eyebrow {
+    @include eyebrow;
+  }
+
+  &__title {
+    @include title;
+  }
+}
+
+// One capability per row; text and visual swap sides from row to row on wide screens.
+.capability {
+  display: grid;
+  gap: $space-8;
+  align-items: center;
+
+  @include breakpoint($bp-md) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: $space-16;
+
+    &--reverse .capability__content {
+      order: 2;
+    }
+  }
+
+  &__content {
+    display: grid;
+    gap: $space-3;
+  }
+
+  &__name {
+    @include text-style(label);
+    color: $color-accent-primary-text;
+  }
+
+  &__title {
+    @include text-style(h3);
+    max-width: 22ch;
+    text-wrap: balance;
+  }
+
+  &__text {
+    @include text-style(body);
+    max-width: 32rem;
+    color: $color-text-secondary;
+  }
+
+  &__visual {
+    display: grid;
+    gap: $space-3;
+    padding: $space-6;
+    border: 1px solid $color-border-subtle;
+    border-radius: $radius-md;
+    background: $color-background-secondary;
+  }
+
+  &__svg {
+    width: 100%;
+    height: auto;
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  &__stroke {
+    stroke: $color-border-strong;
+    stroke-width: 1.5;
+
+    &--accent {
+      stroke: $color-accent-primary-text;
+      stroke-width: 2;
+    }
+  }
+
+  &__tick {
+    stroke: $color-accent-primary-text;
+    stroke-width: 1.5;
+  }
+
+  &__node {
+    fill: $color-background-secondary;
+    stroke: $color-accent-primary-text;
+    stroke-width: 1.5;
+  }
+
+  &__grid-line {
+    stroke: $color-border-subtle;
+    stroke-width: 1;
+  }
+
+  &__area {
+    fill: color-mix(in srgb, $color-accent-primary-text 10%, transparent);
+  }
+
+  // Swatch colors for the cash-flow legend (global .legend block).
+  &__series--in {
+    --legend-swatch: #{$color-accent-primary-text};
+  }
+
+  &__series--left {
+    --legend-swatch: #{color-mix(in srgb, $color-accent-primary-text 18%, transparent)};
+  }
+
+  &__sorting {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: $space-3;
+  }
+
+  &__raw,
+  &__categories {
+    display: grid;
+    gap: $space-2;
+    padding: 0;
+    list-style: none;
+  }
+
+  // Raw bank descriptors: noisy, uneven, monospace-ish.
+  &__raw-item {
+    @include text-style(caption);
+    @include numeric;
+    color: $color-text-muted;
+    letter-spacing: 0.04em;
+
+    &:nth-child(even) {
+      margin-left: $space-3;
+    }
+  }
+
+  &__arrow {
+    width: 2.5rem;
+    fill: none;
+    stroke: $color-text-muted;
+    stroke-width: 1.5;
+  }
+
+  &__category {
+    display: grid;
+    gap: 2px;
+    padding: $space-2 $space-3;
+    border: 1px solid $color-border-default;
+    border-left: 2px solid $color-accent-primary-text;
+    border-radius: $radius-sm;
+    background: $color-surface-primary;
+    @include text-style(label);
+  }
+
+  &__category-count {
+    @include text-style(caption);
+    color: $color-text-muted;
+  }
+
+  &__goal {
+    position: relative;
+    display: grid;
+    place-items: center;
+    justify-self: center;
+    width: min(100%, 15rem);
+  }
+
+  &__ring {
+    width: 100%;
+  }
+
+  &__ring-tick {
+    stroke: $color-border-default;
+    stroke-width: 2;
+    stroke-linecap: round;
+
+    &--done {
+      stroke: $color-accent-secondary;
+    }
+  }
+
+  &__goal-text {
+    position: absolute;
+    display: grid;
+    justify-items: center;
+  }
+
+  &__goal-value {
+    @include text-style(h3);
+    @include numeric;
+  }
+
+  &__goal-detail {
+    @include text-style(caption);
+    @include numeric;
+    color: $color-text-muted;
+  }
+}

@@ -17,6 +17,8 @@ export interface ThreeScene {
   readonly camera: Three.PerspectiveCamera;
   /** Advances the scene; `delta` and `elapsed` in seconds. Never called with reduced motion. */
   update?(delta: number, elapsed: number): void;
+  /** Re-frames the scene for a new canvas size (e.g. portrait vs. landscape composition). */
+  resize?(width: number, height: number): void;
   /** Frees what the canvas cannot find by walking the scene (e.g. listeners, render targets). */
   dispose?(): void;
 }
@@ -156,6 +158,7 @@ export class ThreeCanvas {
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
+      handle.resize?.(width, height);
       render();
     };
     resize();
