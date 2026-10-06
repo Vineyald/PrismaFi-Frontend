@@ -1,11 +1,13 @@
 import { httpResource } from '@angular/common/http';
 import { Component, computed } from '@angular/core';
 import type { components } from '../../core/api/schema';
+import { Button } from '../../shared/ui/button/button';
 
 type HealthResponse = components['schemas']['HealthResponse'];
 
 @Component({
   selector: 'app-home',
+  imports: [Button],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
@@ -20,7 +22,7 @@ export class Home {
       : 'offline';
   });
 
-  // The Retry button stays rendered (aria-disabled) while reloading, so it keeps keyboard focus.
+  // Retry stays rendered (loading, so aria-disabled) while reloading, so it keeps keyboard focus.
   // After a successful retry it disappears and focus returns to <body>; role=status announces the result.
   protected readonly showRetry = computed(
     () => this.apiStatus() === 'offline' || this.health.status() === 'reloading',

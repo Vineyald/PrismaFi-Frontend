@@ -1,0 +1,40 @@
+@use '../abstracts' as *;
+
+// Visible keyboard focus everywhere. Components never remove it without a replacement.
+:focus-visible {
+  @include focus-ring;
+}
+
+// Smooth scrolling for in-page navigation, only for users who have not asked for less motion.
+// scroll-padding keeps anchored sections clear of a future sticky header.
+html {
+  scroll-padding-top: $space-24;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+// Reduced motion: transitions and animations finish instantly. JavaScript-driven motion (3D
+// scenes) checks the same media query itself.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+// Hidden visually, still read by assistive technology.
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

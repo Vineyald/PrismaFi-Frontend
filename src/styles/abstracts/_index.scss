@@ -1,0 +1,11 @@
+// Compile-time design tokens and mixins. Components load them with `@use 'abstracts' as *;`.
+// Emits no CSS on its own, so any stylesheet can use it.
+@forward 'colors';
+@forward 'typography';
+@forward 'spacing';
+@forward 'breakpoints';
+@forward 'radius';
+@forward 'shadows';
+@forward 'motion';
+@forward 'z-index';
+@forward 'mixins';

@@ -1,102 +1,94 @@
-@use 'tokens' as *;
-@use 'mixins' as *;
+@use 'abstracts' as *;
 
 :host {
+  flex: 1;
   display: grid;
-  place-items: center;
 }
 
-.hero {
+.home {
+  position: relative;
+  isolation: isolate;
   display: grid;
-  gap: $space-4;
-  width: 100%;
-  max-width: 40rem;
-  padding: $space-8 $space-6;
-  border: 1px solid var(--prisma-border);
-  border-radius: $radius-lg;
-  background: var(--prisma-surface);
-  box-shadow: var(--prisma-shadow);
-  text-align: center;
+  place-items: center;
+  padding-block: $space-section;
+  overflow: hidden;
 
-  @include breakpoint($bp-md) {
-    padding: $space-12;
+  // Light entering the page from above, over a fading technical grid.
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: $z-background;
+  }
+
+  &::before {
+    @include backdrop-grid;
+  }
+
+  &::after {
+    @include backdrop-glow;
+  }
+
+  &__content {
+    display: grid;
+    justify-items: center;
+    gap: $space-5;
+    text-align: center;
+  }
+
+  &__eyebrow {
+    @include text-style(caption);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: $color-accent-primary-text;
+  }
+
+  &__title {
+    @include text-style(display);
+  }
+
+  &__lead {
+    @include text-style(body-lg);
+    max-width: 32rem;
+    color: $color-text-secondary;
+  }
+
+  &__status {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: $space-2;
+    margin-top: $space-4;
   }
 }
 
-.eyebrow {
-  font-size: $text-sm;
-  font-weight: $weight-medium;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--prisma-accent);
-}
-
-h1 {
-  font-size: $text-2xl;
-  line-height: $leading-tight;
-  background: var(--prisma-gradient-brand);
-  background-clip: text;
-  color: transparent;
-}
-
-.lead {
-  color: var(--prisma-text-muted);
-}
-
-.status-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: $space-2;
-  margin-top: $space-4;
-}
-
-.status {
-  --status-color: var(--prisma-text-muted);
+.api-status {
+  --api-status-color: #{$color-text-muted};
 
   display: inline-flex;
   align-items: center;
   gap: $space-2;
-  padding: $space-2 $space-4;
-  border: 1px solid var(--prisma-border);
+  min-height: $control-height-sm;
+  padding: 0 $space-4;
+  border: 1px solid $color-border-default;
   border-radius: $radius-full;
-  font-size: $text-sm;
-  font-weight: $weight-medium;
+  background: $color-surface-primary;
+  @include text-style(label);
 
-  &[data-status='online'] {
-    --status-color: var(--prisma-positive);
+  &--online {
+    --api-status-color: #{$color-success};
   }
 
-  &[data-status='offline'] {
-    --status-color: var(--prisma-danger);
-  }
-}
-
-.status-dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: $radius-full;
-  background: var(--status-color);
-}
-
-.retry {
-  min-height: 2rem;
-  padding: $space-1 $space-3;
-  border: 0;
-  border-radius: $radius-sm;
-  background: none;
-  color: var(--prisma-accent);
-  font-size: $text-sm;
-  font-weight: $weight-medium;
-  cursor: pointer;
-
-  &:hover {
-    text-decoration: underline;
+  &--offline {
+    --api-status-color: #{$color-error};
   }
 
-  &[aria-disabled='true'] {
-    opacity: 0.6;
-    cursor: progress;
+  &__dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: $radius-full;
+    background: var(--api-status-color);
   }
 }

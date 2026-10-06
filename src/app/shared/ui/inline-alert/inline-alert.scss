@@ -1,55 +1,36 @@
-@use 'tokens' as *;
+@use 'abstracts' as *;
 
-:host {
-  --alert-color: var(--prisma-danger);
+.inline-alert {
+  --inline-alert-color: #{$color-error};
 
   display: flex;
   align-items: flex-start;
   gap: $space-3;
   padding: $space-3 $space-4;
-  border: 1px solid var(--alert-color);
-  border-left-width: 4px;
+  border: 1px solid $color-border-subtle;
+  border-left: 2px solid var(--inline-alert-color);
   border-radius: $radius-sm;
-  background: color-mix(in srgb, var(--alert-color) 8%, var(--prisma-surface));
-  color: var(--prisma-text);
-  font-size: $text-sm;
-  text-align: left;
-}
+  background: color-mix(in srgb, var(--inline-alert-color) 6%, $color-surface-primary);
+  color: $color-text-primary;
+  @include text-style(body-sm);
 
-:host([data-variant='warning']) {
-  --alert-color: var(--prisma-warning);
-}
+  &--warning {
+    --inline-alert-color: #{$color-warning};
+  }
 
-:host([data-variant='info']) {
-  --alert-color: var(--prisma-accent);
-}
+  &--info {
+    --inline-alert-color: #{$color-info};
+  }
 
-// Shape differs per variant: circle (error, info), triangle (warning).
-.icon {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: $radius-full;
-  background: var(--alert-color);
-  color: var(--prisma-surface);
-  font-size: $text-xs;
-  font-weight: $weight-bold;
-  line-height: 1;
-}
-
-:host([data-variant='warning']) .icon {
-  padding-top: 0.25rem;
-  border-radius: 0;
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+  &__icon {
+    flex: none;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-top: 0.125rem;
+    fill: none;
+    stroke: var(--inline-alert-color);
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
 }

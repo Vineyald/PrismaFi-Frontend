@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, ViewEncapsulation, computed, input } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { startWith, switchMap } from 'rxjs';
@@ -18,18 +18,27 @@ const MESSAGES: Record<string, (label: string, error: { requiredLength?: number 
  * Shows the control's first error once it is touched. Built-in validators have default
  * messages; any other error carries its message as its value, e.g.
  * `{ mismatch: 'Passwords do not match.' }` or a server error `{ server: '...' }`.
+ *
+ * BEM block `.form-field`; unencapsulated because the block name already scopes it.
  */
 @Component({
   selector: 'app-form-field',
   imports: [ReactiveFormsModule],
+  encapsulation: ViewEncapsulation.None,
+  host: {
+    class: 'form-field',
+    '[class.form-field--invalid]': '!!error()',
+    '[class.form-field--disabled]': 'disabled()',
+  },
   template: `
-    <label [for]="id">
+    <label class="form-field__label" [for]="id">
       {{ label() }}
       @if (required()) {
-        <span class="required" aria-hidden="true">*</span>
+        <span class="form-field__required" aria-hidden="true">*</span>
       }
     </label>
     <input
+      class="form-field__input"
       [id]="id"
       [type]="type()"
       [formControl]="control()"
@@ -40,10 +49,16 @@ const MESSAGES: Record<string, (label: string, error: { requiredLength?: number 
       [attr.aria-describedby]="describedBy()"
     />
     @if (hint(); as hint) {
-      <p class="hint" [id]="hintId">{{ hint }}</p>
+      <p class="form-field__hint" [id]="hintId">{{ hint }}</p>
     }
     @if (error(); as error) {
-      <p class="error" [id]="errorId"><span class="icon" aria-hidden="true">!</span>{{ error }}</p>
+      <p class="form-field__error" [id]="errorId">
+        <svg class="form-field__error-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9.5" />
+          <path d="M12 7v6M12 16.5v.01" />
+        </svg>
+        {{ error }}
+      </p>
     }
   `,
   styleUrl: './form-field.scss',
@@ -75,6 +90,11 @@ export class FormField {
     this.controlEvents();
     const control = this.control();
     return control.touched && control.errors ? message(this.label(), control.errors) : null;
+  });
+
+  protected readonly disabled = computed(() => {
+    this.controlEvents();
+    return this.control().disabled;
   });
 
   protected readonly describedBy = computed(

@@ -1,0 +1,53 @@
+@use 'sass:color';
+@use 'colors' as *;
+@use 'radius' as *;
+@use 'shadows' as *;
+@use 'spacing' as *;
+
+/// Surface language: dark fill, thin border, small radius, restrained depth.
+/// $level: 'primary' (cards) or 'secondary' (nested or elevated panels).
+@mixin surface($level: primary) {
+  $fill: $color-surface-primary;
+  @if $level == secondary {
+    $fill: $color-surface-secondary;
+  }
+  border: 1px solid $color-border-subtle;
+  border-radius: $radius-md;
+  background: $fill;
+  box-shadow: $shadow-highlight, $shadow-md;
+}
+
+/// Focus ring for custom controls that cannot rely on the global :focus-visible outline.
+@mixin focus-ring {
+  outline: 2px solid $color-focus;
+  outline-offset: 2px;
+}
+
+// --- Backgrounds -------------------------------------------------------------------------
+// Primitives for section backdrops. Use one (at most two) per section; they sit behind content
+// and must never reduce text contrast.
+
+/// Thin technical grid that fades out towards the edges.
+@mixin backdrop-grid($cell: 4rem, $line: $color-border-subtle) {
+  background-image:
+    linear-gradient(to right, $line 1px, transparent 1px),
+    linear-gradient(to bottom, $line 1px, transparent 1px);
+  background-size: $cell $cell;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+/// Soft light source, like light entering a prism. Violet by default, cyan as the counterpoint.
+@mixin backdrop-glow($color: violet, $position: 50% 0%, $size: 60% 50%) {
+  $light: color.change($violet-400, $alpha: 0.14);
+  @if $color == cyan {
+    $light: color.change($cyan-400, $alpha: 0.14);
+  }
+  background-image: radial-gradient(ellipse $size at $position, $light, transparent 70%);
+}
+
+/// Barely visible film grain; breaks up banding in large dark gradients.
+@mixin backdrop-noise($opacity: 0.035) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: $opacity;
+  pointer-events: none;
+}

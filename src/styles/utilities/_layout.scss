@@ -1,0 +1,17 @@
+@use '../abstracts' as *;
+
+// Standard content widths. Pages use these instead of their own max-widths.
+.container {
+  width: 100%;
+  max-width: calc($container-default + 2 * $space-gutter);
+  margin-inline: auto;
+  padding-inline: $space-gutter;
+
+  &--narrow {
+    max-width: calc($container-narrow + 2 * $space-gutter);
+  }
+
+  &--wide {
+    max-width: calc($container-wide + 2 * $space-gutter);
+  }
+}

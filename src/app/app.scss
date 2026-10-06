@@ -1,5 +1,4 @@
-@use 'tokens' as *;
-@use 'mixins' as *;
+@use 'abstracts' as *;
 
 :host {
   display: flex;
@@ -7,48 +6,74 @@
   min-height: 100dvh;
 }
 
-.shell-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: $space-4;
-  border-bottom: 1px solid var(--prisma-border);
-  background: var(--prisma-surface);
+.app-header {
+  border-bottom: 1px solid $color-border-subtle;
+  background: $color-background-primary;
 
-  @include breakpoint($bp-md) {
-    padding: $space-4 $space-8;
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-4;
+    min-height: 4rem;
+  }
+
+  &__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-3;
+    @include text-style(h4);
+    color: $color-text-primary;
+    text-decoration: none;
+  }
+
+  &__mark {
+    flex: none;
+    width: 1.75rem;
+    height: 1.5rem;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &__mark-beam {
+    stroke: $color-text-muted;
+  }
+
+  &__mark-prism {
+    stroke: $color-text-primary;
+  }
+
+  &__mark-ray {
+    &--violet {
+      stroke: $color-accent-primary-text;
+    }
+
+    &--cyan {
+      stroke: $color-accent-secondary;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  // Phones keep only "Sign in"; the sign-in page links to registration.
+  &__cta {
+    display: none;
+
+    @include breakpoint($bp-sm) {
+      display: inline-flex;
+    }
   }
 }
 
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: $space-2;
-  font-size: $text-lg;
-  font-weight: $weight-bold;
-  color: var(--prisma-text);
-  text-decoration: none;
-}
-
-.shell-link {
-  color: var(--prisma-accent);
-  font-weight: $weight-medium;
-}
-
-.brand-mark {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: $radius-sm;
-  background: var(--prisma-gradient-brand);
-  transform: rotate(45deg) scale(0.8);
-}
-
-.shell-main {
+// Routed pages fill the rest of the viewport with `:host { flex: 1; }`.
+.app-main {
   flex: 1;
-  display: grid;
-  padding: $space-6 $space-4;
-
-  @include breakpoint($bp-md) {
-    padding: $space-12 $space-8;
-  }
+  display: flex;
+  flex-direction: column;
 }

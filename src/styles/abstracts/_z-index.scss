@@ -1,0 +1,6 @@
+// Stacking layers. Use these instead of ad-hoc numbers.
+$z-background: -1; // decorative backdrops and 3D canvases behind content
+$z-raised: 1; // content lifted above a backdrop
+$z-header: 100; // sticky site header
+$z-overlay: 1000; // dialogs, menus
+$z-toast: 1100;

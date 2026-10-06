@@ -1,38 +1,42 @@
-<section class="auth-card" aria-labelledby="register-title">
-  <header>
-    <h1 id="register-title">Create your account</h1>
-    <p class="lead">Your finances, together in one place.</p>
-  </header>
+<div class="auth-page">
+  <section class="auth-card" aria-labelledby="register-title">
+    <header class="auth-card__header">
+      <h1 class="auth-card__title" id="register-title">Create your account</h1>
+      <p class="auth-card__lead">Your finances, together in one place.</p>
+    </header>
 
-  @if (failure(); as failure) {
-    <app-inline-alert>{{ failure }}</app-inline-alert>
-  }
+    @if (failure(); as failure) {
+      <app-inline-alert>{{ failure }}</app-inline-alert>
+    }
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <app-form-field label="Name" autocomplete="name" [control]="form.controls.name" />
-    <app-form-field
-      label="Email"
-      type="email"
-      autocomplete="email"
-      [control]="form.controls.email"
-    />
-    <app-form-field
-      label="Password"
-      type="password"
-      autocomplete="new-password"
-      [hint]="passwordHint"
-      [control]="form.controls.password"
-    />
-    <app-form-field
-      label="Confirm password"
-      type="password"
-      autocomplete="new-password"
-      [control]="form.controls.confirmPassword"
-    />
-    <button app-button type="submit" [loading]="pending()">
-      {{ pending() ? 'Creating account…' : 'Create account' }}
-    </button>
-  </form>
+    <form class="auth-card__form" [formGroup]="form" (ngSubmit)="submit()">
+      <app-form-field label="Name" autocomplete="name" [control]="form.controls.name" />
+      <app-form-field
+        label="Email"
+        type="email"
+        autocomplete="email"
+        [control]="form.controls.email"
+      />
+      <app-form-field
+        label="Password"
+        type="password"
+        autocomplete="new-password"
+        [hint]="passwordHint"
+        [control]="form.controls.password"
+      />
+      <app-form-field
+        label="Confirm password"
+        type="password"
+        autocomplete="new-password"
+        [control]="form.controls.confirmPassword"
+      />
+      <button app-button class="auth-card__submit" type="submit" [loading]="pending()">
+        {{ pending() ? 'Creating account…' : 'Create account' }}
+      </button>
+    </form>
 
-  <p class="switch">Already have an account? <a routerLink="/login">Sign in</a></p>
-</section>
+    <p class="auth-card__switch">
+      Already have an account? <a class="auth-card__link" routerLink="/login">Sign in</a>
+    </p>
+  </section>
+</div>

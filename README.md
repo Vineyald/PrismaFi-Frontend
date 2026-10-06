@@ -21,18 +21,20 @@ O backend fica em um repositório separado (`PrismaFi-Backend`). Os dois se inte
 
 ## Stack tecnológica
 
-| Tecnologia                                 | Por que está aqui                                                                                                                  | Status                                                         |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| **Angular 22**                             | Framework da aplicação: componentes standalone, Signals, router, HttpClient. Zoneless por padrão.                                  | instalado                                                      |
-| **TypeScript 6** (strict)                  | Tipagem de ponta a ponta, incluindo os tipos gerados a partir do schema OpenAPI do backend. `strict` e `strictTemplates` ativados. | instalado                                                      |
-| **SCSS**                                   | O design system próprio do PrismaFi: tokens de compilação e CSS custom properties para temas em runtime.                           | instalado                                                      |
-| **Signals**                                | Estado local e compartilhado com `signal`, `computed` e `httpResource`. Sem NgRx e sem stores de BehaviorSubject.                  | em uso                                                         |
-| **Vitest**                                 | Testes unitários e de componentes, pelo builder `@angular/build:unit-test` com jsdom.                                              | instalado                                                      |
-| **Playwright**                             | Testes end-to-end em navegador real (o Google Chrome instalado).                                                                   | instalado                                                      |
-| **ESLint** (angular-eslint) + **Prettier** | Lint, incluindo regras de acessibilidade nos templates, e formatação.                                                              | instalado                                                      |
-| **Angular CDK**                            | Primitivas de comportamento e acessibilidade (overlays, focus trap, a11y) sob o visual próprio do PrismaFi.                        | planejado: instalar com o primeiro overlay ou menu             |
-| **Lucide**                                 | Conjunto de ícones.                                                                                                                | planejado: instalar com o primeiro ícone                       |
-| **Apache ECharts**                         | Gráficos financeiros.                                                                                                              | planejado: instalar com o primeiro gráfico que realmente ajude |
+| Tecnologia                                 | Por que está aqui                                                                                                                         | Status                                                         |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **Angular 22**                             | Framework da aplicação: componentes standalone, Signals, router, HttpClient. Zoneless por padrão.                                         | instalado                                                      |
+| **TypeScript 6** (strict)                  | Tipagem de ponta a ponta, incluindo os tipos gerados a partir do schema OpenAPI do backend. `strict` e `strictTemplates` ativados.        | instalado                                                      |
+| **SCSS**                                   | O design system próprio do PrismaFi: tokens de compilação e CSS custom properties para temas em runtime.                                  | instalado                                                      |
+| **Signals**                                | Estado local e compartilhado com `signal`, `computed` e `httpResource`. Sem NgRx e sem stores de BehaviorSubject.                         | em uso                                                         |
+| **Vitest**                                 | Testes unitários e de componentes, pelo builder `@angular/build:unit-test` com jsdom.                                                     | instalado                                                      |
+| **Playwright**                             | Testes end-to-end em navegador real (o Google Chrome instalado).                                                                          | instalado                                                      |
+| **ESLint** (angular-eslint) + **Prettier** | Lint, incluindo regras de acessibilidade nos templates, e formatação.                                                                     | instalado                                                      |
+| **Angular CDK**                            | Primitivas de comportamento e acessibilidade (overlays, focus trap, a11y) sob o visual próprio do PrismaFi.                               | planejado: instalar com o primeiro overlay ou menu             |
+| **Lucide**                                 | Conjunto de ícones.                                                                                                                       | planejado: instalar com o primeiro ícone                       |
+| **Three.js**                               | Cenas 3D da identidade (prismas da landing page), carregadas por import dinâmico só quando o canvas aparece. Ver `docs/design-system.md`. | instalado                                                      |
+| **Inter** (`@fontsource-variable/inter`)   | Fonte da interface, auto-hospedada (sem requisição a terceiros), com algarismos tabulares.                                                | instalado                                                      |
+| **Apache ECharts**                         | Gráficos financeiros.                                                                                                                     | planejado: instalar com o primeiro gráfico que realmente ajude |
 
 Pacotes planejados só são instalados quando um componente precisa deles, seguindo a regra do projeto contra dependências sem uso.
 
@@ -55,16 +57,17 @@ PrismaFi-Frontend/
 │   │   │       ├── auth-page.scss   # Estilo compartilhado pelas duas telas
 │   │   │       └── testing.ts       # Helpers dos specs das telas
 │   │   ├── shared/
-│   │   │   └── ui/                  # button, form-field, inline-alert
+│   │   │   ├── ui/                  # button, form-field, inline-alert
+│   │   │   └── three/               # <app-three-canvas> (cenas 3D lazy) e PRISM_PALETTE
 │   │   ├── app.ts / app.scss        # Shell da aplicação: header + <router-outlet>
 │   │   ├── app.routes.ts            # Rotas lazy
 │   │   └── app.config.ts            # Providers: router (com input binding), HttpClient (fetch)
 │   ├── styles/
-│   │   ├── _tokens.scss             # Tokens de compilação: espaçamento, raios, tipografia, breakpoints
-│   │   ├── _themes.scss             # Tema em runtime: custom properties --prisma-*, claro + escuro
-│   │   ├── _mixins.scss             # Media query mobile-first `breakpoint($bp)`
-│   │   └── _reset.scss              # Reset moderno mínimo
-│   ├── styles.scss                  # Entrada global: reset, temas, estilos base do body
+│   │   ├── abstracts/               # Tokens e mixins (não emitem CSS): cores, tipografia, espaçamento,
+│   │   │                            # breakpoints, raios, sombras, movimento, z-index, superfícies, fundos
+│   │   ├── base/                    # Tema (custom properties), reset, tipografia base, foco e movimento reduzido
+│   │   ├── utilities/               # Classes globais: .container, .metric, .numeric
+│   │   └── main.scss                # Entrada global (única folha que emite CSS global)
 │   ├── index.html
 │   └── main.ts
 ├── .github/workflows/ci.yml         # CI: lint, format:check, test, build, e2e
@@ -87,7 +90,7 @@ PrismaFi-Frontend/
 
 `shared/ui/` contém os componentes de UI reutilizáveis, sem dependência de `core/` ou de features:
 
-- `button[app-button]`: estiliza um `<button>` nativo (semântica, `type` e `disabled` continuam com quem usa). Com `[loading]`, mostra um spinner, fica `aria-disabled` (sem perder o foco) e cancela cliques, inclusive o clique implícito do Enter num campo, impedindo envio duplicado.
+- `button[app-button]` / `a[app-button]`: estiliza um `<button>` ou `<a>` nativo (semântica, `type`, `href` e `disabled` continuam com quem usa), com variantes `primary`, `secondary` e `ghost` e tamanho `small`. Com `[loading]`, mostra um spinner, fica `aria-disabled` (sem perder o foco) e cancela cliques, inclusive o clique implícito do Enter num campo, impedindo envio duplicado.
 - `app-form-field`: label + input ligado a um `FormControl<string>` tipado, com indicação de obrigatório, dica e mensagem de erro (ligada por `aria-describedby`) depois que o campo é tocado. Erros sem mensagem padrão levam o texto no próprio valor (`{ mismatch: '...' }`, `{ server: '...' }`).
 - `app-inline-alert`: feedback contextual. `error` usa `role="alert"`; `warning` e `info` usam `role="status"`. Cada variante tem ícone de formato próprio e um rótulo oculto, para não depender só da cor.
 
@@ -109,13 +112,14 @@ PrismaFi-Frontend/
 
 ## Estilos
 
-O PrismaFi tem identidade visual própria. Ele **não usa Tailwind, Bootstrap, DaisyUI nem Angular Material** como design system.
+O PrismaFi tem identidade visual própria: **escura, neutra e precisa**, com um violeta elétrico como acento principal e um ciano como secundário. Ele **não usa Tailwind, Bootstrap, DaisyUI nem Angular Material**. A referência completa (conceito, paleta, tokens, tipografia, BEM, movimento, responsividade, linguagem visual do prisma e acessibilidade) está em [`docs/design-system.md`](docs/design-system.md).
 
-- **Tokens (`_tokens.scss`)** são variáveis SCSS para valores fixos em tempo de build: escala de espaçamento (`$space-*`), altura de controles (`$control-height`), raios, fonte, escala tipográfica, pesos, alturas de linha e breakpoints. Os componentes os carregam com `@use 'tokens' as *;` (`src/styles` está no include path do SCSS). Um token só é criado quando um componente precisa dele, e o Sass falha em variáveis indefinidas.
-- **Temas (`_themes.scss`)** são CSS custom properties para tudo o que muda em runtime: `--prisma-bg`, `--prisma-surface`, `--prisma-border`, `--prisma-text`, `--prisma-text-muted`, `--prisma-accent`, `--prisma-on-accent` (texto sobre o accent), `--prisma-accent-2`, `--prisma-positive`, `--prisma-warning`, `--prisma-danger`, `--prisma-shadow` e `--prisma-gradient-brand`. O tema claro é o padrão e o escuro segue o `prefers-color-scheme`. Um seletor manual de tema pode, no futuro, sobrescrever as mesmas propriedades via `[data-theme]`.
-- **Estilos de componente** ficam junto do componente (`*.scss`, encapsulamento emulado). Usam tokens e `var(--prisma-*)`, não cores ou espaçamentos fixos no código. Estilos globais se limitam a reset, tema e tipografia base.
-- **Responsividade**: mobile-first, com `@include breakpoint($bp-md) { ... }` (ou pelo nome: `breakpoint(md)`).
-- **Acessibilidade**: anel global de `:focus-visible`, `prefers-reduced-motion` respeitado no reset, contraste de texto de pelo menos 3:1 para texto grande e 4,5:1 para texto comum, e as regras de acessibilidade do ESLint nos templates.
+- **Tokens** ficam em `src/styles/abstracts/` e são carregados com `@use 'abstracts' as *;` (`src/styles` está no include path do SCSS). Componentes usam só tokens semânticos (`$color-text-primary`, `$space-4`, `text-style(h3)`...), nunca hex ou valores soltos.
+- **Tema**: as cores semânticas resolvem para CSS custom properties `--prisma-*` (`base/_root.scss`). O PrismaFi é escuro por design.
+- **BEM** obrigatório para classes de componentes (`.bloco__elemento--modificador`). Os blocos de `shared/ui/` usam `ViewEncapsulation.None` (o nome do bloco já isola o CSS); páginas usam o encapsulamento padrão.
+- **Fonte**: Inter variável, auto-hospedada (`@fontsource-variable/inter`), com algarismos tabulares para números financeiros.
+- **Responsividade**: mobile-first de 320px a 2560px, com `@include breakpoint(md)` e tipografia/espaçamento fluidos (`clamp()`); larguras de conteúdo via `.container`, `.container--narrow` e `.container--wide`.
+- **Acessibilidade**: anel global de `:focus-visible`, contrastes medidos (WCAG), estado nunca só por cor, `prefers-reduced-motion` respeitado (inclusive a rolagem suave nativa) e as regras de acessibilidade do ESLint nos templates.
 
 ## Configuração do ambiente
 
@@ -194,7 +198,7 @@ Toda requisição do navegador para `http://localhost:4200/api/...` é encaminha
   - os componentes de `shared/ui/`: botão que bloqueia o envio enquanto carrega, campo com label associado, erros só depois de tocado e ligados por `aria-describedby`, alerta com `role` correto;
   - `core/auth`: login guarda o token só em memória, cadastro não autentica, e o mapeamento de erros HTTP (401, 422, rede, servidor);
   - login e cadastro: campos obrigatórios, e-mail inválido, confirmação de senha (revalidada quando a senha muda), foco no primeiro campo inválido, estado de carregamento, envio único, mensagem genérica para credenciais recusadas (inclusive 422 no login), falhas de rede e de servidor distintas, erros de campo vindos do servidor sem o texto bruto, e o aviso de sessão expirada.
-- **Playwright** (`npm run e2e`): testes em navegador real contra o `ng serve`, com a API simulada via `page.route` (as fixtures usam os tipos gerados do OpenAPI), então o backend não é necessário. Cobrem a rota lazy, o redirecionamento de rotas desconhecidas, a jornada cadastro → aviso → login → home, login recusado só com teclado, validação no cliente com foco, uma única requisição apesar de cliques e Enter repetidos, o aviso de sessão expirada e a ausência de rolagem horizontal em 360px. O Playwright usa o Google Chrome instalado (`channel: 'chrome'`), então não há download de navegador. Os runners do GitHub Actions já têm o Chrome instalado.
+- **Playwright** (`npm run e2e`): testes em navegador real contra o `ng serve`, com a API simulada via `page.route` (as fixtures usam os tipos gerados do OpenAPI), então o backend não é necessário. Cobrem a rota lazy, o redirecionamento de rotas desconhecidas, a jornada cadastro → aviso → login → home, login recusado só com teclado, validação no cliente com foco, uma única requisição apesar de cliques e Enter repetidos, o aviso de sessão expirada e a ausência de rolagem horizontal em 320px. O Playwright usa o Google Chrome instalado (`channel: 'chrome'`), então não há download de navegador. Os runners do GitHub Actions já têm o Chrome instalado.
 
 ## Roadmap até o MVP
 
@@ -240,7 +244,7 @@ Com eventos de auditoria registrados para as ações financeiras críticas. O MV
 - [x] Angular 22 standalone e zoneless, com TypeScript `strict` e `strictTemplates`
 - [x] Rotas lazy (`loadComponent`) com redirecionamento de rotas desconhecidas
 - [x] Signals e `httpResource` em uso (status da API na tela inicial)
-- [x] Base do design system em SCSS: tokens, temas claro e escuro via custom properties, reset e mixin de breakpoint
+- [x] Base do design system em SCSS: tokens, tema via custom properties, reset e mixin de breakpoint (substituída pela identidade visual definitiva, escura, descrita em `docs/design-system.md`)
 - [x] Shell mínimo e tela inicial responsivos
 - [x] Proxy de desenvolvimento `/api` para o backend
 - [x] Tipos da API gerados a partir do OpenAPI (`npm run api:types`)

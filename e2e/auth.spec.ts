@@ -132,7 +132,7 @@ test('explains a session expiry on the sign-in page', async ({ page }) => {
 });
 
 test('auth pages stay within the viewport on mobile', async ({ page }) => {
-  await page.setViewportSize({ width: 360, height: 740 });
+  await page.setViewportSize({ width: 320, height: 640 });
 
   for (const path of ['/login', '/register']) {
     await page.goto(path);

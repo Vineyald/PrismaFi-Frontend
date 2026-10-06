@@ -1,0 +1,8 @@
+// Global stylesheet: the only file that emits global CSS. Order matters: theme properties,
+// then reset, base element styles, accessibility, and shared utility classes.
+@use 'base/root';
+@use 'base/reset';
+@use 'base/typography';
+@use 'base/accessibility';
+@use 'utilities/layout';
+@use 'utilities/financial';
