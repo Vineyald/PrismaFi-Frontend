@@ -139,6 +139,17 @@ describe('Login', () => {
     expect(page.alert()?.textContent).not.toContain('Internal server error');
   });
 
+  it('says so when signing in works but leaving the page fails', async () => {
+    vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockRejectedValue(new Error('chunk'));
+    const page = await render();
+
+    (await submitValid(page)).flush(token);
+    await page.settle();
+
+    expect(page.alert()?.textContent).toContain('Something went wrong on our side.');
+    expect(page.button().hasAttribute('aria-disabled')).toBe(false);
+  });
+
   it('explains why the user was sent here when the session expired', async () => {
     const page = await render('session-expired');
 

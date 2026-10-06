@@ -70,6 +70,9 @@ export class Register {
     // Stays pending until the page is left, so the form cannot be sent again meanwhile.
     try {
       await this.router.navigate(['/login'], { queryParams: { notice: 'registered' } });
+    } catch {
+      // e.g. the next page's code failed to load: say so instead of failing silently.
+      this.failure.set(applyFailure({ kind: 'unexpected' }, this.form));
     } finally {
       this.pending.set(false);
     }
