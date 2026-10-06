@@ -1,0 +1,48 @@
+@use 'tokens' as *;
+@use 'mixins' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.shell-header {
+  display: flex;
+  align-items: center;
+  padding: $space-4;
+  border-bottom: 1px solid var(--prisma-border);
+  background: var(--prisma-surface);
+
+  @include from($bp-md) {
+    padding: $space-4 $space-8;
+  }
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $text-lg;
+  font-weight: $weight-bold;
+  color: var(--prisma-text);
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: $radius-sm;
+  background: var(--prisma-gradient-brand);
+  transform: rotate(45deg) scale(0.8);
+}
+
+.shell-main {
+  flex: 1;
+  display: grid;
+  padding: $space-6 $space-4;
+
+  @include from($bp-md) {
+    padding: $space-12 $space-8;
+  }
+}

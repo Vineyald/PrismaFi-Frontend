@@ -1,0 +1,32 @@
+<section class="hero">
+  <p class="eyebrow">Financial control, in one place</p>
+  <h1>PrismaFi</h1>
+  <p class="lead">Accounts, bills, transactions and payments, together. The foundation is ready.</p>
+
+  <div class="status-row">
+    <div class="status" [attr.data-status]="apiStatus()" role="status">
+      <span class="status-dot" aria-hidden="true"></span>
+      @switch (apiStatus()) {
+        @case ('checking') {
+          <span>Checking API…</span>
+        }
+        @case ('online') {
+          <span>API online</span>
+        }
+        @case ('offline') {
+          <span>API offline</span>
+        }
+      }
+    </div>
+    @if (showRetry()) {
+      <button
+        type="button"
+        class="retry"
+        [attr.aria-disabled]="health.isLoading()"
+        (click)="retry()"
+      >
+        Retry
+      </button>
+    }
+  </div>
+</section>

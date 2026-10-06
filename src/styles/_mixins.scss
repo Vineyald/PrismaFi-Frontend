@@ -1,0 +1,6 @@
+// Mobile-first media query: styles apply from $min width upwards.
+@mixin from($min) {
+  @media (min-width: $min) {
+    @content;
+  }
+}
