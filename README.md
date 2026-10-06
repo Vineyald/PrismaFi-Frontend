@@ -4,7 +4,7 @@ Aplicação web do PrismaFi, construída com Angular e TypeScript.
 
 O PrismaFi é um SaaS financeiro que dá ao usuário uma visão centralizada da sua vida financeira. Ele vai reunir, em uma aplicação web autenticada, instituições conectadas via Open Finance, contas bancárias, saldos, transações e contas a pagar, além da iniciação de pagamentos. A operação financeira é executada por infraestrutura regulada; o PrismaFi orquestra a experiência e nunca tem a custódia do dinheiro do usuário.
 
-Hoje este repositório contém a fundação: o shell da aplicação, a base do design system, uma tela inicial carregada sob demanda (lazy) que mostra o status do backend em tempo real, e a estrutura de testes. Ainda não há funcionalidades de produto (veja o [Roadmap até o MVP](#roadmap-até-o-mvp)).
+Hoje este repositório contém a fundação (o shell da aplicação, a base do design system, uma tela inicial lazy que mostra o status do backend, a estrutura de testes e o CI) e o começo da Fase 1: telas de cadastro e login, com os primeiros componentes de UI reutilizáveis (veja o [Roadmap até o MVP](#roadmap-até-o-mvp)).
 
 O backend fica em um repositório separado (`PrismaFi-Backend`). Os dois se integram **somente** via REST e pelo schema OpenAPI do backend; este repositório nunca importa arquivos do backend.
 
@@ -43,15 +43,22 @@ PrismaFi-Frontend/
 ├── src/
 │   ├── app/
 │   │   ├── core/
-│   │   │   └── api/
-│   │   │       └── schema.d.ts      # GERADO a partir do OpenAPI do backend (npm run api:types)
+│   │   │   ├── api/
+│   │   │   │   └── schema.d.ts      # GERADO a partir do OpenAPI do backend (npm run api:types)
+│   │   │   └── auth/
+│   │   │       └── auth.ts          # Chamadas de login/cadastro, token em memória, toAuthFailure
 │   │   ├── features/
-│   │   │   └── home/                # Tela inicial (rota lazy)
-│   │   │       ├── home.ts / .html / .scss
-│   │   │       └── home.spec.ts
+│   │   │   ├── home/                # Tela inicial (rota lazy)
+│   │   │   └── auth/                # Telas de autenticação (rotas lazy /login e /register)
+│   │   │       ├── login/ , register/
+│   │   │       ├── auth-form.ts     # Validadores, mensagens de falha e foco, comuns às duas telas
+│   │   │       ├── auth-page.scss   # Estilo compartilhado pelas duas telas
+│   │   │       └── testing.ts       # Helpers dos specs das telas
+│   │   ├── shared/
+│   │   │   └── ui/                  # button, form-field, inline-alert
 │   │   ├── app.ts / app.scss        # Shell da aplicação: header + <router-outlet>
 │   │   ├── app.routes.ts            # Rotas lazy
-│   │   └── app.config.ts            # Providers: router, HttpClient (fetch)
+│   │   └── app.config.ts            # Providers: router (com input binding), HttpClient (fetch)
 │   ├── styles/
 │   │   ├── _tokens.scss             # Tokens de compilação: espaçamento, raios, tipografia, breakpoints
 │   │   ├── _themes.scss             # Tema em runtime: custom properties --prisma-*, claro + escuro
@@ -60,8 +67,10 @@ PrismaFi-Frontend/
 │   ├── styles.scss                  # Entrada global: reset, temas, estilos base do body
 │   ├── index.html
 │   └── main.ts
+├── .github/workflows/ci.yml         # CI: lint, format:check, test, build, e2e
 ├── e2e/
-│   └── app.spec.ts                  # Testes Playwright
+│   ├── app.spec.ts                  # Testes Playwright: shell e tela inicial
+│   └── auth.spec.ts                 # Testes Playwright: cadastro e login
 ├── public/favicon.svg
 ├── proxy.conf.json                  # Proxy de desenvolvimento: /api -> http://localhost:8000
 ├── playwright.config.ts
@@ -69,34 +78,40 @@ PrismaFi-Frontend/
 └── angular.json
 ```
 
-| Pasta              | Responsabilidade                                                                                                                                                                                                                                                                        |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `core/`            | Infraestrutura não visual, usada pela aplicação inteira. Hoje é o contrato gerado da API. Com a autenticação, nasce `core/auth/`: estado da sessão (Signals), interceptor e guards. `features/auth/` contém só as telas e usa a sessão de `core/auth/`; `core/` nunca importa features. |
-| `features/<nome>/` | Uma pasta por área do produto, cada uma com sua rota lazy, componentes, estilos e specs. Uma feature nunca importa detalhes internos de outra.                                                                                                                                          |
-| `styles/`          | Camada global do design system.                                                                                                                                                                                                                                                         |
-| `app.ts`           | O shell. Só vai para uma pasta `layout/` própria quando houver mais de um layout (ex.: público vs. autenticado), o que está previsto para a Fase 1.                                                                                                                                     |
+| Pasta              | Responsabilidade                                                                                                                                                                                                                                                                                                                                 |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `core/`            | Infraestrutura não visual, usada pela aplicação inteira. Hoje: o contrato gerado da API e `core/auth/` (chamadas de autenticação e token em memória); o interceptor, os guards e o estado de sessão completo entram ali nas próximas entregas da Fase 1. `features/auth/` contém só as telas e usa `core/auth/`; `core/` nunca importa features. |
+| `features/<nome>/` | Uma pasta por área do produto, cada uma com sua rota lazy, componentes, estilos e specs. Uma feature nunca importa detalhes internos de outra.                                                                                                                                                                                                   |
+| `styles/`          | Camada global do design system.                                                                                                                                                                                                                                                                                                                  |
+| `app.ts`           | O shell. Só vai para uma pasta `layout/` própria quando houver mais de um layout (ex.: público vs. autenticado), o que está previsto para a Fase 1.                                                                                                                                                                                              |
 
-`shared/` e `layout/` **ainda não existem, de propósito**. `shared/` nasce com o primeiro componente de UI reutilizável ou utilitário de formatação (ex.: `shared/ui/` para botão e campo de formulário, `shared/format/` para valores em BRL).
+`shared/ui/` contém os componentes de UI reutilizáveis, sem dependência de `core/` ou de features:
+
+- `button[app-button]`: estiliza um `<button>` nativo (semântica, `type` e `disabled` continuam com quem usa). Com `[loading]`, mostra um spinner, fica `aria-disabled` (sem perder o foco) e cancela cliques, inclusive o clique implícito do Enter num campo, impedindo envio duplicado.
+- `app-form-field`: label + input ligado a um `FormControl<string>` tipado, com indicação de obrigatório, dica e mensagem de erro (ligada por `aria-describedby`) depois que o campo é tocado. Erros sem mensagem padrão levam o texto no próprio valor (`{ mismatch: '...' }`, `{ server: '...' }`).
+- `app-inline-alert`: feedback contextual. `error` usa `role="alert"`; `warning` e `info` usam `role="status"`. Cada variante tem ícone de formato próprio e um rótulo oculto, para não depender só da cor.
+
+`layout/` **ainda não existe, de propósito**: nasce com o layout autenticado. Outras pastas de `shared/` (ex.: `shared/format/` para valores em BRL) nascem com o primeiro uso.
 
 ## Padrões Angular
 
-| Convenção             | Regra                                                                                                                                                                                                                                             |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Standalone            | Só componentes, sem NgModules. A flag `standalone: true` é implícita.                                                                                                                                                                             |
-| Signals               | `signal()` para estado e `computed()` para valores derivados. `effect()` só para efeitos colaterais reais, como sincronizar DOM ou storage.                                                                                                       |
-| Busca de dados        | `httpResource()` para leituras: baseado em signals, sem subscriptions manuais. Observables do HttpClient só para mutações ou streaming.                                                                                                           |
-| Control flow          | `@if`, `@for`, `@switch`. Sem diretivas estruturais.                                                                                                                                                                                              |
-| DI                    | `inject()`, não injeção pelo construtor.                                                                                                                                                                                                          |
-| Rotas                 | Toda feature é carregada sob demanda com `loadComponent` ou `loadChildren`.                                                                                                                                                                       |
-| Guards / interceptors | Só funcionais (`CanActivateFn`, `HttpInterceptorFn`). Guards são declarados nas rotas (`canActivate` / `canMatch`); interceptors são registrados via `provideHttpClient(withInterceptors(...))`. Ainda não há nenhum, porque não há autenticação. |
-| Formulários           | Typed Reactive Forms (`FormControl<T>`, `NonNullableFormBuilder`). O `@angular/forms` entra com o primeiro formulário.                                                                                                                            |
-| Tipos da API          | Sempre de `core/api/schema.d.ts`. Nunca escreva à mão o formato dos dados do backend.                                                                                                                                                             |
+| Convenção             | Regra                                                                                                                                                                                                                                                |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Standalone            | Só componentes, sem NgModules. A flag `standalone: true` é implícita.                                                                                                                                                                                |
+| Signals               | `signal()` para estado e `computed()` para valores derivados. `effect()` só para efeitos colaterais reais, como sincronizar DOM ou storage.                                                                                                          |
+| Busca de dados        | `httpResource()` para leituras: baseado em signals, sem subscriptions manuais. Observables do HttpClient só para mutações ou streaming.                                                                                                              |
+| Control flow          | `@if`, `@for`, `@switch`. Sem diretivas estruturais.                                                                                                                                                                                                 |
+| DI                    | `inject()`, não injeção pelo construtor.                                                                                                                                                                                                             |
+| Rotas                 | Toda feature é carregada sob demanda com `loadComponent` ou `loadChildren`.                                                                                                                                                                          |
+| Guards / interceptors | Só funcionais (`CanActivateFn`, `HttpInterceptorFn`). Guards são declarados nas rotas (`canActivate` / `canMatch`); interceptors são registrados via `provideHttpClient(withInterceptors(...))`. Ainda não há nenhum: entram com a sessão (refresh). |
+| Formulários           | Typed Reactive Forms (`FormControl<T>`, `NonNullableFormBuilder`), exibidos com `app-form-field`. Regras espelham as do backend em `features/auth/auth-form.ts`.                                                                                     |
+| Tipos da API          | Sempre de `core/api/schema.d.ts`. Nunca escreva à mão o formato dos dados do backend.                                                                                                                                                                |
 
 ## Estilos
 
 O PrismaFi tem identidade visual própria. Ele **não usa Tailwind, Bootstrap, DaisyUI nem Angular Material** como design system.
 
-- **Tokens (`_tokens.scss`)** são variáveis SCSS para valores fixos em tempo de build: escala de espaçamento (`$space-*`), raios, fonte, escala tipográfica, pesos, alturas de linha e breakpoints. Os componentes os carregam com `@use 'tokens' as *;` (`src/styles` está no include path do SCSS). Um token só é criado quando um componente precisa dele, e o Sass falha em variáveis indefinidas.
+- **Tokens (`_tokens.scss`)** são variáveis SCSS para valores fixos em tempo de build: escala de espaçamento (`$space-*`), altura de controles (`$control-height`), raios, fonte, escala tipográfica, pesos, alturas de linha e breakpoints. Os componentes os carregam com `@use 'tokens' as *;` (`src/styles` está no include path do SCSS). Um token só é criado quando um componente precisa dele, e o Sass falha em variáveis indefinidas.
 - **Temas (`_themes.scss`)** são CSS custom properties para tudo o que muda em runtime: `--prisma-bg`, `--prisma-surface`, `--prisma-border`, `--prisma-text`, `--prisma-text-muted`, `--prisma-accent`, `--prisma-on-accent` (texto sobre o accent), `--prisma-accent-2`, `--prisma-positive`, `--prisma-warning`, `--prisma-danger`, `--prisma-shadow` e `--prisma-gradient-brand`. O tema claro é o padrão e o escuro segue o `prefers-color-scheme`. Um seletor manual de tema pode, no futuro, sobrescrever as mesmas propriedades via `[data-theme]`.
 - **Estilos de componente** ficam junto do componente (`*.scss`, encapsulamento emulado). Usam tokens e `var(--prisma-*)`, não cores ou espaçamentos fixos no código. Estilos globais se limitam a reset, tema e tipografia base.
 - **Responsividade**: mobile-first, com `@include breakpoint($bp-md) { ... }` (ou pelo nome: `breakpoint(md)`).
@@ -174,13 +189,17 @@ Toda requisição do navegador para `http://localhost:4200/api/...` é encaminha
 
 ## Testes
 
-- **Vitest** (`npm test`): testes de componente com `TestBed` e `HttpTestingController`. Hoje cobrem a lógica de status da tela inicial: backend saudável mostra online; um 503 mostra offline; o botão Retry continua focável enquanto recarrega e depois volta para online.
-- **Playwright** (`npm run e2e`): testes em navegador real contra o `ng serve`, com `/api/health` simulado via `page.route`, então o backend não é necessário. Cobrem a renderização da rota lazy, o redirecionamento de rotas desconhecidas e a ausência de rolagem horizontal em 360px de largura. O Playwright usa o Google Chrome instalado (`channel: 'chrome'`), então não há download de navegador. Os runners do GitHub Actions já têm o Chrome instalado.
+- **Vitest** (`npm test`): testes de componente com `TestBed` e `HttpTestingController`. Cobrem:
+  - a lógica de status da tela inicial (online, offline com 503, Retry focável enquanto recarrega);
+  - os componentes de `shared/ui/`: botão que bloqueia o envio enquanto carrega, campo com label associado, erros só depois de tocado e ligados por `aria-describedby`, alerta com `role` correto;
+  - `core/auth`: login guarda o token só em memória, cadastro não autentica, e o mapeamento de erros HTTP (401, 422, rede, servidor);
+  - login e cadastro: campos obrigatórios, e-mail inválido, confirmação de senha (revalidada quando a senha muda), foco no primeiro campo inválido, estado de carregamento, envio único, mensagem genérica para credenciais recusadas (inclusive 422 no login), falhas de rede e de servidor distintas, erros de campo vindos do servidor sem o texto bruto, e o aviso de sessão expirada.
+- **Playwright** (`npm run e2e`): testes em navegador real contra o `ng serve`, com a API simulada via `page.route` (as fixtures usam os tipos gerados do OpenAPI), então o backend não é necessário. Cobrem a rota lazy, o redirecionamento de rotas desconhecidas, a jornada cadastro → aviso → login → home, login recusado só com teclado, validação no cliente com foco, uma única requisição apesar de cliques e Enter repetidos, o aviso de sessão expirada e a ausência de rolagem horizontal em 360px. O Playwright usa o Google Chrome instalado (`channel: 'chrome'`), então não há download de navegador. Os runners do GitHub Actions já têm o Chrome instalado.
 
 ## Roadmap até o MVP
 
-> **Estado atual:** Fundação técnica concluída.\
-> **Próximo marco:** Identidade e autenticação.\
+> **Estado atual:** Fase 1 em andamento (cadastro e login entregues).\
+> **Próximo marco:** Identidade e autenticação (sessão, logout e perfil).\
 > **MVP:** não concluído.
 
 Este roadmap é compartilhado com o `PrismaFi-Backend`: as fases e os marcos são os mesmos nos dois repositórios. Aqui ficam os itens de **frontend** (UX, arquitetura Angular, autenticação, dashboard, conexão bancária, transações, contas a pagar, pagamento, responsividade e acessibilidade). Os itens de domínio, API e integrações estão no README do backend.
@@ -200,19 +219,19 @@ Com eventos de auditoria registrados para as ações financeiras críticas. O MV
 
 ### Visão geral das fases
 
-| Fase | Marco                                     | Status      |
-| ---- | ----------------------------------------- | ----------- |
-| 0    | Fundação técnica                          | Concluída   |
-| 1    | Identidade e autenticação                 | **Próxima** |
-| 2    | Shell da aplicação e design system        | Planejada   |
-| 3    | Integração com provedor de Open Finance   | Planejada   |
-| 4    | Contas bancárias, saldos e transações     | Planejada   |
-| 5    | Contas a pagar e obrigações financeiras   | Planejada   |
-| 6    | Dashboard financeiro                      | Planejada   |
-| 7    | Iniciação de pagamentos                   | Planejada   |
-| 8    | Notificações e confiabilidade operacional | Planejada   |
-| 9    | Hardening do MVP                          | Planejada   |
-| 10   | Lançamento do MVP                         | Planejada   |
+| Fase | Marco                                     | Status           |
+| ---- | ----------------------------------------- | ---------------- |
+| 0    | Fundação técnica                          | Concluída        |
+| 1    | Identidade e autenticação                 | **Em andamento** |
+| 2    | Shell da aplicação e design system        | Planejada        |
+| 3    | Integração com provedor de Open Finance   | Planejada        |
+| 4    | Contas bancárias, saldos e transações     | Planejada        |
+| 5    | Contas a pagar e obrigações financeiras   | Planejada        |
+| 6    | Dashboard financeiro                      | Planejada        |
+| 7    | Iniciação de pagamentos                   | Planejada        |
+| 8    | Notificações e confiabilidade operacional | Planejada        |
+| 9    | Hardening do MVP                          | Planejada        |
+| 10   | Lançamento do MVP                         | Planejada        |
 
 ### Fase 0 — Fundação técnica
 
@@ -232,10 +251,10 @@ Com eventos de auditoria registrados para as ações financeiras críticas. O MV
 **Objetivo:** estabelecer a fundação de identidade segura do PrismaFi.\
 **Entrega conjunta:** o usuário cria conta, entra, gerencia o perfil e as sessões ativas, e sai.
 
-- [ ] CI no GitHub Actions: `lint`, `format:check`, `test`, `build`, `e2e`
-- [ ] `@angular/forms` com Typed Reactive Forms (primeiro formulário)
-- [ ] Primeiros componentes base em `shared/ui/`, criados com o primeiro formulário: botão, campo de formulário e alerta inline (erros de autenticação, sessão expirada)
-- [ ] Feature `auth`: telas de cadastro e login, com validação, estados de carregamento e mensagens de erro que não revelam se o e-mail existe
+- [x] CI no GitHub Actions: `lint`, `format:check`, `test`, `build`, `e2e`
+- [x] `@angular/forms` com Typed Reactive Forms (primeiro formulário)
+- [x] Primeiros componentes base em `shared/ui/`, criados com o primeiro formulário: botão, campo de formulário e alerta inline (erros de autenticação, sessão expirada)
+- [x] Feature `auth`: telas de cadastro e login, com validação, estados de carregamento e mensagens de erro que não revelam se o e-mail existe. O login aceita `?notice=session-expired`, base para o aviso de sessão expirada
 - [ ] Verificação de e-mail e recuperação de senha (telas de solicitação e de redefinição)
 - [ ] Estado de autenticação com Signals em `core/auth/` (usuário atual, status da sessão), sem store externo
 - [ ] Restauração da sessão na inicialização: `provideAppInitializer` tenta um refresh uma única vez e resolve o estado (`autenticado`, `anônimo`) antes de qualquer guard decidir; reload e deep link não mandam para o login
